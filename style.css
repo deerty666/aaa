@@ -1,0 +1,29 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1c1c1c;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+.sections-container { display: flex; overflow-x: auto; background-color: #222; padding: 10px; position: relative; z-index: 10; }
+.sec-card { flex: 0 0 auto; width: 100px; margin-right: 10px; text-align: center; cursor: pointer; border-radius: 10px; overflow: hidden; background-color: #333; }
+.sec-card img { width: 100%; height: 60px; object-fit: cover; }
+.sec-card.active { border: 2px solid #f4b400; }
+.menu-list { display: flex; flex-wrap: wrap; padding: 10px; }
+.card { background-color: #2c2c2c; width: calc(50% - 10px); margin: 5px; border-radius: 10px; padding: 10px; position: relative; }
+.card img { width: 100%; border-radius: 10px; }
+.best-seller-badge { position: absolute; top: 5px; left: 5px; background-color: gold; color: black; padding: 2px 5px; border-radius: 4px; font-size: 0.8rem; }
+.add-btn { background-color: #f4b400; border: none; padding: 8px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 5px; }
+.unavailable-card { opacity: 0.5; }
+.discount-card { border: 2px solid #ff4c4c; }
+#cartBtn { position: fixed; bottom: 20px; right: 20px; background-color: #f4b400; border: none; border-radius: 50%; width: 60px; height: 60px; font-weight: bold; cursor: pointer; z-index: 20; }
+#cartDrawer { position: fixed; top: 0; right: -400px; width: 350px; height: 100%; background-color: #222; padding: 20px; overflow-y: auto; transition: right 0.3s; z-index: 30; }
+#cartDrawer.open { right: 0; }
+#cartOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 25; }
+#cartOverlay.show { display: block; }
+#optionModal { display: none; position: fixed; top:0; left:0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 50; }
+#optionModal .modal-content { background-color: #333; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+.opt-btn { margin: 5px 0; padding: 8px; width: 100%; border: none; cursor: pointer; background-color: #f4b400; color: black; border-radius: 6px; }
+.sections-sticky { position: sticky; top: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    
