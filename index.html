@@ -1,55 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>قائمة سحايب ديرتي</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-</head>
-<body>
-
-<header>
-  <h1>قائمة سحايب ديرتي</h1>
-  <input type="text" id="searchBar" placeholder="ابحث عن وجبتك...">
-  <button id="installAppBtn" style="display:none;">تثبيت التطبيق</button>
-</header>
-
-<div id="sections" class="sections"></div>
-<div id="menuList" class="menu-list"></div>
-
-<!-- عربة التسوق -->
-<button id="cartBtn" class="cart-btn">🛒 <span id="cartCount">0</span></button>
-<div id="cartOverlay" class="cart-overlay"></div>
-<div id="cartDrawer" class="cart-drawer">
-  <button id="closeCartBtn">إغلاق</button>
-  <div id="cartItems"></div>
-  <div id="totalBreakdown"></div>
-  <div>
-    <label><input type="radio" name="deliveryType" value="delivery" checked> توصيل</label>
-    <label><input type="radio" name="deliveryType" value="pickup"> استلام من الفرع</label>
-  </div>
-  <button id="sendWhatsapp">أرسل الطلب عبر واتساب</button>
-  <button id="clearCart">مسح السلة</button>
-</div>
-
-<!-- مودال الخيارات -->
-<div id="optionModal" class="option-modal">
-  <div class="modal-content">
-    <h2 id="modalTitle"></h2>
-    <div id="modalOptions"></div>
-    <input type="text" id="itemNote" placeholder="أضف ملاحظة...">
-    <button id="modalConfirm">أضف للسلة</button>
-  </div>
-</div>
-
-<!-- إشعارات منبثقة -->
-<div id="notificationPrompt" class="notification-prompt">
-  <p>هل ترغب بتفعيل الإشعارات لتصلك أحدث العروض؟</p>
-  <button id="allowNotifications">نعم، أريد ذلك</button>
-  <button id="denyNotifications">لا شكراً</button>
-</div>
-
-<script src="script.js"></script>
-</body>
-</html>
