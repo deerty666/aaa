@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منيو احترافي</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://example.com/favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+
+<header class="header">
+  <h1>مطعمنا - فرع واحد</h1>
+</header>
+
+<div class="search-container">
+  <input type="text" id="searchBar" placeholder="ابحث عن وجبتك...">
+</div>
+
+<div id="menuList" class="menu-list"></div>
+
+<button id="cartBtn" class="cart-btn"><i class="fas fa-shopping-cart"></i> سلة الطلبات <span id="cartCount">0</span></button>
+
+<div id="cartDrawer" class="cart-drawer">
+  <div class="cart-header">
+    <h2>سلة الطلبات</h2>
+    <button id="closeCartBtn" class="close-btn"><i class="fas fa-times"></i></button>
+  </div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="total-breakdown" id="totalBreakdown"></div>
+  <div class="cart-actions">
+    <label><input type="radio" name="deliveryType" value="delivery" checked> توصيل</label>
+    <label><input type="radio" name="deliveryType" value="pickup"> استلام من الفرع</label>
+    <button id="sendWhatsapp" class="wa-btn"><i class="fab fa-whatsapp"></i> أرسل عبر WhatsApp</button>
+    <button id="clearCart" class="clear-btn"><i class="fas fa-trash-alt"></i> تفريغ السلة</button>
+  </div>
+</div>
+
+<div id="cartOverlay" class="cart-overlay"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
