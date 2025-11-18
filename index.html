@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قائمة سحايب ديرتي</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="Icon-192.png" sizes="192x192">
+</head>
+<body>
+  <!-- Header / Sections -->
+  <header>
+    <div id="sections"></div>
+    <input type="text" id="searchBar" placeholder="ابحث عن وجباتك هنا...">
+  </header>
+
+  <!-- Menu List -->
+  <main id="menuList"></main>
+
+  <!-- Cart Drawer -->
+  <div id="cartDrawer" aria-hidden="true">
+    <div id="cartItems"></div>
+    <div id="totalBreakdown"></div>
+    <button id="sendWhatsapp">ارسال واتساب</button>
+    <button id="clearCart">تفريغ السلة</button>
+    <button id="closeCartBtn">اغلاق</button>
+  </div>
+  <div id="cartOverlay"></div>
+  <button id="cartBtn">سلة الطلبات <span id="cartCount"></span></button>
+
+  <!-- Option Modal -->
+  <div id="optionModal">
+    <h3 id="modalTitle"></h3>
+    <div id="modalOptions"></div>
+    <textarea id="itemNote" placeholder="أضف ملاحظة"></textarea>
+    <button id="modalConfirm">أضف للسلة</button>
+  </div>
+
+  <!-- Notification Prompt -->
+  <div id="notificationPrompt">
+    <p>هل تريد تفعيل الإشعارات لأحدث العروض؟</p>
+    <button id="allowNotifications">نعم، أريد ذلك</button>
+    <button id="denyNotifications">لا شكراً</button>
+  </div>
+
+  <button id="installAppBtn">تثبيت التطبيق</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
