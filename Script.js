@@ -1,12 +1,12 @@
 // File: Script.js (النسخة النهائية - نظيفة ومقسمة)
 
-// ⭐️ استيراد جميع الوحدات والدوال المفصولة
-// ⭐️ استيراد جميع الوحدات والدوال المفصولة
-import { generateWhatsAppMessage } from '/aaa/messaging.js';
-import { renderMenu } from '/aaa/menuRenderer.js'; 
-import { flyToCart } from '/aaa/animation.js'; 
-import { BRANCH_CONFIG } from '/aaa/config.js';
-import menuData from '/aaa/menuData.js';
+
+// ⭐️ استيراد جميع الوحدات والدوال المفصولة - المسارات معدلة
+import { generateWhatsAppMessage } from 'aaa/messaging.js';
+import { renderMenu } from 'aaa/menuRenderer.js'; 
+import { flyToCart } from 'aaa/animation.js'; 
+import { BRANCH_CONFIG } from 'aaa/config.js';
+import menuData from 'aaa/menuData.js';
 
 
 /* ================================================= */
