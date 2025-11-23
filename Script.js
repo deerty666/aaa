@@ -173,7 +173,7 @@ window.addEventListener('load', () => {
 // 4.3. PWA Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/Dirty55/service-worker.js') .then(reg => {
+        navigator.serviceWorker.register('/aaa/service-worker.js') .then(reg => {
             console.log('Service Worker Registered!', reg.scope);
         })
         .catch(err => {
