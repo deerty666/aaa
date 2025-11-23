@@ -327,7 +327,7 @@ const menuData = [
         sectionImg: "/aaa/dr00.webp",
         items:[
             // الوجبة 1
-            {id:"bev-p", img:"/Dirty55/dr01.webp", name:"ببسي", basePrice:0, availableIn: ['branch1', 'branch2', 'branch3'], options:[
+            {id:"bev-p", img:"/aaa/dr01.webp", name:"ببسي", basePrice:0, availableIn: ['branch1', 'branch2', 'branch3'], options:[
                 {name:"صغير", price:3},
                 {name:"وسط", price:6},
                 {name:"كبير", price:9}
