@@ -3,17 +3,17 @@ const CACHE_NAME = 'deerty-menu-v5';
 
 // الملفات الأساسية التي يجب تخزينها مؤقتاً
 const urlsToCache = [
-    '/Dirty55/', 
-    '/Dirty55/menu.html',
-    '/Dirty55/style.css',
-    '/Dirty55/Script.js',
-    '/Dirty55/manifest.json',
+    '/aaa/', 
+    '/aaa/menu.html',
+    '/aaa/style.css',
+    '/aaa/Script.js',
+    '/aaa/manifest.json',
     // 🚨 الملفات الخمسة الجديدة
-    '/Dirty55/config.js',
-    '/Dirty55/menuData.js',
-    '/Dirty55/animation.js',
-    '/Dirty55/menuRenderer.js',
-    '/Dirty55/messaging.js'
+    '/aaa/config.js',
+    '/aaa/menuData.js',
+    '/aaa/animation.js',
+    '/aaa/menuRenderer.js',
+    '/aaa/messaging.js'
 ];
 
 self.addEventListener('install', (evt) => {
