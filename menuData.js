@@ -15,7 +15,7 @@ const menuData = [
         sectionImg: "/aaa/sh00.webp", // صورة القسم
         items:[
             // الوجبة 1
-            {id:"sh1", img:"/Dirty55/sh00.webp", name:"حبة شواية", basePrice:46, availableIn: ['branch1','branch2', 'branch3'], options:[ 
+            {id:"sh1", img:"/aaa/sh00.webp", name:"حبة شواية", basePrice:46, availableIn: ['branch1','branch2', 'branch3'], options:[ 
                 {name:"رز شعبي", price:0},
                 {name:"رز بشاور", price:4},
                 {name:"رز مندي", price:4},
