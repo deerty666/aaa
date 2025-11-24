@@ -1,5 +1,5 @@
 // اسم الكاش الخاص بنا (تم التحديث إلى v5)
-const CACHE_NAME = 'deerty-menu-v5';
+const CACHE_NAME = 'deerty-menu-v7';
 
 // الملفات الأساسية التي يجب تخزينها مؤقتاً
 const urlsToCache = [
