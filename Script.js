@@ -2,11 +2,11 @@
 
 
 // ⭐️ استيراد جميع الوحدات والدوال المفصولة - المسارات معدلة
-import { generateWhatsAppMessage } from 'aaa/messaging.js';
-import { renderMenu } from 'aaa/menuRenderer.js'; 
-import { flyToCart } from 'aaa/animation.js'; 
-import { BRANCH_CONFIG } from 'aaa/config.js';
-import menuData from 'aaa/menuData.js';
+import { generateWhatsAppMessage } from './messaging.js';
+import { renderMenu } from './menuRenderer.js'; 
+import { flyToCart } from './animation.js'; 
+import { BRANCH_CONFIG } from './config.js';
+import menuData from './menuData.js';
 
 
 /* ================================================= */
