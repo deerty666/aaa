@@ -159,46 +159,22 @@ header img {
 /* 🍽️ 4. بطاقات الوجبات (Menu Cards) */
 /* ================================================= */
 #menuList {
-    /* تم إزالة قواعد الـ Grid ونقلها لـ .section-content */
-    padding: 0 15px; 
-    /* التنسيق الأساسي للمحتوى الرئيسي */
-}
-
-/* تنسيق عنوان القسم */
-.section-header {
-    padding: 15px 15px 5px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--gold);
-    border-bottom: 1px solid var(--border-color);
-    margin-top: 20px;
-}
-
-/* ✅ العنصر الحاوي للبطاقات (تمت إضافة Grid هنا) */
-.section-content {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 15px;
-    margin-bottom: 20px;
-    padding: 10px 0;
+    padding: 0 15px;
 }
 
-
 @media (min-width: 600px) {
-    /* توسيط المحتوى على الشاشات الكبيرة */
     #menuList {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
         max-width: 1200px;
         margin: 0 auto;
     }
-    /* زيادة حجم الأعمدة والمسافة */
-    .section-content {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-    }
 }
 
-/* ✅ تصحيح اسم الفئة: من .card إلى .menu-item-card */
-.menu-item-card {
+.card {
     background-color: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
@@ -209,7 +185,7 @@ header img {
     padding-bottom: 10px;
 }
 
-.menu-item-card img {
+.card img {
     width: 100%;
     height: 120px;
     object-fit: cover;
@@ -217,24 +193,30 @@ header img {
     margin-bottom: 10px;
 }
 
-.menu-item-card h3 {
+.card h3 {
     margin: 0 10px 5px;
     font-size: 1rem;
     font-weight: 700;
     color: var(--light-text);
 }
 
-.menu-item-card .item-price { /* تم تعديل .card p إلى .item-price */
+.card p {
     margin: 0 10px 8px;
-    font-size: 1.1rem; 
+    font-size: 0.8rem;
+    color: var(--gold); /* لون القسم بلون مميز */
+}
+
+.card .price {
+    margin: 0 10px 10px;
+    font-size: 1.1rem;
     font-weight: 800;
-    color: var(--light-text); 
+    color: var(--light-text);
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.menu-item-card .add-to-cart-btn { /* تم تعديل .card .add-btn إلى .add-to-cart-btn */
+.card .add-btn {
     background-color: var(--gold);
     color: var(--old-brown);
     padding: 10px;
@@ -247,11 +229,11 @@ header img {
     font-size: 0.95rem;
 }
 
-.menu-item-card .add-to-cart-btn:hover {
+.card .add-btn:hover {
     background-color: #a07c4c;
 }
 
-.menu-item-card .add-to-cart-btn:disabled {
+.card .add-btn:disabled {
     background-color: #555;
     color: #bbb;
     cursor: not-allowed;
@@ -262,7 +244,7 @@ header img {
 }
 
 /* 🏆 شارة الأكثر مبيعاً */
-.best-seller { /* تم تعديل .best-seller-badge إلى .best-seller */
+.best-seller-badge {
     position: absolute;
     top: 8px;
     right: 8px;
@@ -466,9 +448,10 @@ header img {
     padding-right: 15px;
 }
 
-/* ✨ تنسيقات بطاقات التوصيل والاستلام الجديدة */
+/* ✨ تنسيقات بطاقات التوصيل والاستلام الجديدة (بناءً على HTML المعدل) */
+
 .delivery-options-container {
-    background-color: transparent !important; 
+    background-color: transparent !important; /* لضمان عمل Glassmorphism */
     display: flex;
     justify-content: space-between;
     padding: 15px 20px;
@@ -477,10 +460,12 @@ header img {
     gap: 15px; 
 }
 
+/* إخفاء زر الراديو الافتراضي تماماً - يعتمد على HTML الذي أرسلته سابقاً */
 .delivery-options-container input[type="radio"] {
     display: none; 
 }
 
+/* تنسيق بطاقة الخيار (المرئية) */
 .delivery-option {
     flex: 1;
     display: flex;
@@ -494,12 +479,14 @@ header img {
     transition: all 0.2s;
 }
 
+/* تنسيق الخيار المُحدد (الذهبي) باستخدام محدد الأخ المجاور (+) */
 .delivery-options-container input[type="radio"]:checked + .delivery-option {
     border-color: var(--gold); 
     background-color: #2e2925; 
     box-shadow: 0 0 10px rgba(195, 158, 106, 0.4);
 }
 
+/* تنسيق النصوص داخل البطاقة */
 .delivery-option span {
     font-weight: 700;
     font-size: 1rem;
@@ -510,6 +497,7 @@ header img {
     color: var(--red); 
     margin-top: 5px;
 }
+/* نهاية تنسيقات التوصيل المخصصة */
 
 
 .cart-footer {
@@ -568,7 +556,7 @@ header img {
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
     z-index: 50;
-    display: none; 
+    display: none; /* إخفاء افتراضياً */
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -615,6 +603,7 @@ header img {
     cursor: pointer;
     transition: background 0.2s;
     font-size: 0.9rem;
+    /* 🎨 التعديل الجديد: إضافة مسافة خارجية حول الزر لتحسين التباعد */
     margin: 4px; 
 }
 
@@ -638,85 +627,7 @@ header img {
 /* ================================================= */
 /* 🔔 9. تنسيق الإشعار المنبثق (Notification Prompt) */
 /* ================================================= */
-#notificationPrompt {
-    display: none; 
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.notification-content {
-    background: var(--card-bg-dark);
-    color: var(--light-text);
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 350px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    animation: fadeIn 0.3s ease-out;
-    border: 1px solid var(--gold);
-}
-
-.notification-content h3 {
-    color: var(--gold);
-    margin-top: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.notification-content p {
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
-
-.notification-content button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    margin: 5px;
-    transition: background 0.2s;
-    width: 100%; 
-}
-
-#allowNotifications {
-    background-color: var(--gold);
-    color: var(--old-brown);
-}
-
-#allowNotifications:hover {
-    background-color: #a07c4c;
-}
-
-#denyNotifications {
-    background-color: #333;
-    color: var(--light-text);
-}
-
-#denyNotifications:hover {
-    background-color: #555;
-}
-
-@media (min-width: 480px) {
-    .notification-content button {
-        width: 45%; 
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
+/* تم وضع تنسيقات الإشعار بالفعل في كود HTML الذي أرسلته سابقاً داخل <style> */
 
 
 /* ================================================= */
