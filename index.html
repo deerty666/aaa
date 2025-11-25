@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مطعم تجريبي</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .item-card {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+            cursor: pointer;
+            display: flex; 
+            align-items: center;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+        }
+        .item-card h3 {
+            color: #ffc107;
+            margin-top: 0;
+        }
+        .item-card p {
+            margin: 5px 0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .modal-content {
+            background-color: #242424;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            color: #e0e0e0;
+        }
+        .close-btn {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* تنسيق السلة الأصلي للشاشات الكبيرة */
+        .cart-summary {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 280px;
+            background-color: #242424;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            z-index: 500;
+        }
+        .cart-summary button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        /* تنسيق زر الإغلاق داخل السلة على الجوال */
+        .close-btn-cart {
+            color: #ffc107;
+            float: left;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+            margin-left: 5px;
+        }
+        .close-btn-cart:hover {
+            color: #fff;
+        }
+        
+        /* تنسيق أزرار الفلترة */
+        .filter-btn {
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #ffc107;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .filter-btn:hover {
+            background-color: #555;
+        }
+        .filter-btn.active {
+            background-color: #ffc107;
+            color: #121212;
+            font-weight: bold;
+        }
+
+        /* تنسيق زر السلة للجوال (افتراضياً مخفي) */
+        #mobileCartButton {
+            display: none; 
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ffc107;
+            color: #121212;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* استعلام الوسائط: تطبيق هذه القواعد فقط على الشاشات الأصغر من 768 بكسل */
+        @media (max-width: 768px) {
+            
+            /* إخفاء السلة الجانبية وتعديل موقعها لـ Mobile Modal */
+            .cart-summary {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%; 
+                height: 100%; 
+                padding: 20px;
+                z-index: 990; 
+                display: none; 
+            }
+            
+            /* إظهار زر السلة العائم */
+            #mobileCartButton {
+                display: flex; 
+            }
+        }
+        
+        /* Custom styles for Autocomplete dropdown */
+        .pac-container {
+            background-color: #242424;
+            border: 1px solid #555;
+            z-index: 2000; 
+        }
+        .pac-item {
+            color: #e0e0e0;
+        }
+        .pac-item-selected, .pac-item:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="filterButtonsContainer" style="margin-bottom: 20px;">
+        </div>
+
+    <h2>قائمة المطعم</h2>
+    <div class="menu-container" id="menuContainer">
+        </div>
+
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalContent">
+                </div>
+        </div>
+    </div>
+    
+    <div id="cartSummary" class="cart-summary"></div>
+
+    <button id="mobileCartButton" onclick="toggleCart()">
+        🛒
+    </button>
+    
+    <script src="menuData.js"></script>
+    <script src="script.js"></script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+</body>
+</html>
