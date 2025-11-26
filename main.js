@@ -18,7 +18,7 @@ document.title = `قائمة سحايب ديرتي - فرع ${currentBranch.name
 
 const processedMenuData = processMenuData(menuData); 
 let cart = CartLogic.loadCart(currentBranchId); 
-let currentSection = processedMenuData[1].section;
+let currentSection = processedMenuData[0].section;
 let modalData = {}; 
 let selectedItemImage = null; 
 let userLocation = null; // للإحداثيات الجغرافية
