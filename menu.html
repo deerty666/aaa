@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>قائمة مطاعم ومطابخ سحايب ديرتي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+<base href="/aaa/"> <link rel="manifest" href="manifest.json"> <meta name="theme-color" content="#1A1512"> 
+
+<link rel="stylesheet" href="style.css"> 
+
+</head>
+<body>
+    
+    <header>
+        <div id="branchName" class="branch-name"></div>
+        <div class="header-controls">
+            <input type="text" id="searchInput" placeholder="ابحث عن وجبة أو قسم...">
+            <button id="scrollToTop" class="icon-btn" aria-label="العودة للأعلى">⬆️</button>
+        </div>
+        
+    </header>
+
+    <div class="menu-container" id="menuContainer">
+        </div>
+
+    <div id="cartSidebar">
+        <h2>سلتك</h2>
+        <div id="cartItems">
+            <p class="empty-cart-msg">سلتك فارغة حالياً.</p>
+        </div>
+        
+        <div class="delivery-info">
+            <label for="customerName">الاسم:</label>
+            <input type="text" id="customerName" placeholder="الاسم المطلوب في الطلب" required>
+
+            <label for="customerPhone">رقم الجوال:</label>
+            <input type="tel" id="customerPhone" placeholder="رقم الجوال للتواصل" required>
+            
+            <label for="deliveryOption">نوع الطلب:</label>
+            <select id="deliveryOption">
+                <option value="pickup">استلام من الفرع (بدون رسوم)</option>
+                <option value="delivery">توصيل</option>
+            </select>
+            
+            <label for="deliveryAddress" id="addressLabel" style="display:none;">عنوان التوصيل:</label>
+            <textarea id="deliveryAddress" 
+                      placeholder="اسم الشارع، الحي، رقم المنزل، ملاحظات التوصيل..." 
+                      rows="2" 
+                      style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--search-bg); color: var(--light-text); font-size: 1em;"></textarea>
+        </div>
+        <div class="cart-footer">
+        <div id="totalBreakdown">
+          </div>
+        <div style="display:flex;gap:8px;">
+          <button id="sendWhatsapp" class="primary-btn" style="flex:1;">إرسال عبر واتساب</button>
+          <button id="clearCart" class="danger-btn" style="width:120px;">مسح السلة</button>
+        </div>
+      </div>
+    </div>
+
+    <button id="cartBtn" aria-label="عرض السلة">🛒 <span id="cartCount" style="display:none"></span></button>
+
+    <div id="optionModal">
+      <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <div id="modalOptions"></div>
+        
+        <textarea id="itemNote" placeholder="ملاحظات خاصة على هذا الصنف (مثل: بدون ملح، فلفل خفيف)..." rows="3"></textarea>
+        
+        <button id="modalConfirm" class="primary-btn">تأكيد</button>
+      </div>
+    </div>
+
+    <script src="Script.js"></script>
+</body>
+</html>
