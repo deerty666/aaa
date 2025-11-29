@@ -3,11 +3,11 @@ const CACHE_NAME = 'deerty-menu-v1';
 
 // الملفات الأساسية التي يجب تخزينها مؤقتاً لتمكين التثبيت (PWA requirement)
 const urlsToCache = [
-    '/aaa/', // 🎯 جذر المستودع
-    '/aaa/menu.html', // 🎯 المسار المطلق الصحيح
-    '/aaa/style.css', // 🎯 المسار المطلق الصحيح
-    '/aaa/Script.js', // 🎯 المسار المطلق الصحيح
-    '/aaa/manifest.json' // 🎯 المسار المطلق الصحيح
+    '/Dirty55/', 
+    '/Dirty55/menu.html',
+    '/Dirty55/style.css',
+    '/Dirty55/Script.js',
+    '/Dirty55/manifest.json'
 ];
 
 self.addEventListener('install', (evt) => {
@@ -38,9 +38,10 @@ self.addEventListener('activate', (evt) => {
 
 self.addEventListener('fetch', (evt) => {
     // استراتيجية "الشبكة أولاً مع العودة للكاش"
+    // هذا يضمن أن يتم جلب جميع البيانات (بما في ذلك menuData من Script.js) من الشبكة دائماً
     evt.respondWith(
-        fetch(evt.request).catch(function () {
-            // إذا فشل الاتصال بالشبكة، نعود إلى الكاش
+        fetch(evt.request).catch(function() {
+            // إذا فشل جلب البيانات من الشبكة، نرجع النسخة المخزنة مؤقتاً فقط للملفات الأساسية
             return caches.match(evt.request);
         })
     );
