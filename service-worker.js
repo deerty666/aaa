@@ -3,11 +3,11 @@ const CACHE_NAME = 'deerty-menu-v1';
 
 // الملفات الأساسية التي يجب تخزينها مؤقتاً لتمكين التثبيت (PWA requirement)
 const urlsToCache = [
-    '/Dirty55/', 
-    '/Dirty55/menu.html',
-    '/Dirty55/style.css',
-    '/Dirty55/Script.js',
-    '/Dirty55/manifest.json'
+    '/aaa/', 
+    '/aaa/menu.html',
+    '/aaa/style.css',
+    '/aaa/Script.js',
+    '/aaa/manifest.json'
 ];
 
 self.addEventListener('install', (evt) => {
