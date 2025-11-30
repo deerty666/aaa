@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>مطاعم ومطابخ سحايب ديرتي - اختيار الفرع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="manifest" href="/Dirty55/manifest.json">
+    <meta name="theme-color" content="#1A1512"> 
+    
+    <style>
+        /* إضافة تنسيقات خاصة لمركزة المحتوى في صفحة اختيار الفرع */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 0;
+        }
+        .branch-selection-container {
+            max-width: 400px;
+            width: 90%;
+            padding: 25px;
+            background: var(--card-bg-dark);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+        .branch-selection-container h1 {
+            color: var(--gold);
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+            font-weight: 800;
+        }
+        /* تعديل تنسيق الروابط لتصبح أزرار قابلة للنقر */
+        .branch-link {
+            display: block;
+            background: var(--gold);
+            color: var(--old-brown);
+            text-decoration: none;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            transition: background 0.2s, transform 0.1s;
+            cursor: pointer;
+        }
+        .branch-link:hover {
+            background: #a07c4c;
+            transform: translateY(-2px);
+        }
+        
+        /* ------------------------------------- */
+        /* 🔔 تنسيق النافذة المنبثقة (Modal) للإعلان */
+        /* ------------------------------------- */
+        #adModal {
+            display: none; /* إخفاء افتراضياً */
+            position: fixed;
+            z-index: 100; /* يجب أن يكون عالياً ليظهر فوق كل شيء */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex; /* لمركزة المحتوى */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg-dark);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+        
+        @keyframes animatetop {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .modal-content h2 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-size: 1.7rem;
+        }
+        
+        #adImage {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        #confirmAdBtn {
+            background: #4CAF50; /* لون أخضر جذاب */
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        #confirmAdBtn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="branch-selection-container">
+    <h1>اختر الفرع الأقرب إليك</h1>
+
+    <div class="branch-link" onclick="showBranchAd('branch1')">فرع لبن الاحمدية</div>
+    <div class="branch-link" onclick="showBranchAd('branch2')">فرع شمال الرياض مخرج ٦</div>
+    <div class="branch-link" onclick="showBranchAd('branch3')">فرع الروضه خالد بن الوليد</div>
+</div>
+
+
+<div id="adModal">
+    <div class="modal-content">
+        <h2 id="modalBranchName"></h2>
+        <p id="adText"></p>
+        <img id="adImage" src="" alt="صورة إعلان">
+        
+        <button id="confirmAdBtn">متابعة إلى قائمة الطعام</button>
+    </div>
+</div>
+<script>
+    /* ⚠️ بيانات الفروع للتحكم في الإعلانات - هذه البيانات مكررة هنا ومن الضروري تحديثها في Script.js أيضاً
+    */
+    const BRANCH_CONFIG = {
+        'branch1': { 
+            name: 'لبن الاحمدية',
+            adMessage: 'إعلان خاص: عرض التوفير في فرع لبن الأحمدية! اشترِ وجبتين واحصل على الثالثة مجاناً.',
+            adImage: 'www.jpg' 
+        },
+        'branch2': {
+            name: 'شمال الرياض مخرج ٦', 
+            adMessage: 'إعلان خاص: وجبة الغداء الجديدة متوفرة الآن في فرع شمال الرياض! لا تفوت العرض.',
+            adImage: 'rrr.jpg' 
+        },
+        'branch3': {
+            name: 'الروضه خالد بن الوليد ',
+            adMessage: 'إعلان خاص: خدمة التوصيل المجاني داخل حي الروضة - لفترة محدودة! اطلب الآن.',
+            adImage: 'fff.jpg'
+        }
+    };
+
+    const adModal = document.getElementById('adModal');
+    const modalBranchName = document.getElementById('modalBranchName');
+    const adText = document.getElementById('adText');
+    const adImage = document.getElementById('adImage');
+    const confirmAdBtn = document.getElementById('confirmAdBtn');
+    
+    let selectedBranchId = null;
+
+    // دالة عرض النافذة المنبثقة للإعلان
+    function showBranchAd(branchId) {
+        const branch = BRANCH_CONFIG[branchId];
+        if (!branch) return;
+        
+        selectedBranchId = branchId;
+
+        // 1. تحديث محتوى النافذة المنبثقة
+        modalBranchName.textContent = `إعلان فرع ${branch.name}`;
+        adText.textContent = branch.adMessage;
+        
+        // 2. تحديث وعرض الصورة
+        if (branch.adImage) {
+            // سيعرض الصورة إذا كانت موجودة (مثلاً www.jpg)
+            adImage.src = branch.adImage;
+            adImage.style.display = 'block';
+        } else {
+            adImage.src = '';
+            adImage.style.display = 'none'; // إخفاء مساحة الصورة إذا لم تكن هناك صورة
+        }
+
+        // 3. عرض النافذة المنبثقة
+        adModal.style.display = 'flex'; // استخدام flex بدلاً من block لمركزة المحتوى
+    }
+
+    // 4. ربط زر المتابعة بنقل المستخدم إلى صفحة القائمة
+    confirmAdBtn.onclick = function() {
+        if (selectedBranchId) {
+            // الانتقال إلى صفحة menu.html مع تمرير معرف الفرع في الرابط
+            window.location.href = `menu.html?branch=${selectedBranchId}`;
+        }
+    };
+    
+    // 5. إغلاق النافذة عند النقر خارج المحتوى (أصبح غير ضروري مع display: flex لكن نتركه احتياطاً)
+    /* window.onclick = function(event) {
+        if (event.target == adModal) {
+            adModal.style.display = "none";
+            selectedBranchId = null; 
+        }
+    } */
+</script>
+</body>
+</html>
