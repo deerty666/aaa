@@ -1,3 +1,11 @@
+<script>
+// إذا كان فيه فرع محفوظ، روح له مباشرة
+let savedBranch = localStorage.getItem("selectedBranch");
+if (savedBranch) {
+    window.location.href = savedBranch + "_welcome.html";
+}
+</script>
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -59,9 +67,20 @@
 <div class="branch-selection-container">
     <h1>اختر الفرع الأقرب إليك</h1>
 
-<a href="branch1_welcome.html" class="branch-link">لبن الاحمدية</a>
-<a href="branch2_welcome.html" class="branch-link">شمال الرياض مخرج ٦</a>
-<a href="branch3_welcome.html" class="branch-link">الروضه خالد بن الوليد</a>
+<a href="branch1_welcome.html" class="branch-link" 
+   onclick="localStorage.setItem('selectedBranch', 'branch1')">
+    لبن الاحمدية
+</a>
+
+<a href="branch2_welcome.html" class="branch-link" 
+   onclick="localStorage.setItem('selectedBranch', 'branch2')">
+    شمال الرياض مخرج ٦
+</a>
+
+<a href="branch3_welcome.html" class="branch-link" 
+   onclick="localStorage.setItem('selectedBranch', 'branch3')">
+    الروضه خالد بن الوليد
+</a>
     
 </div>
 
