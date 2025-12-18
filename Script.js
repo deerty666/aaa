@@ -813,14 +813,15 @@ function addToCart(item){
 
 /* ====== renderCart - عرض الإجمالي التفصيلي باستخدام رسوم الفرع الحالي ====== */
 function renderCart(){
-function renderCart(){
     cartItemsEl.innerHTML='';
     let subtotal = 0;
     let count = 0;
     const branchDeliveryFee = currentBranch.deliveryFee || 0; // رسوم التوصيل من بيانات الفرع
 
-    // ⭐ ترتيب السلة: أحدث عنصر بالأعلى
-    cart.sort((a,b)=> (b.time || 0) - (a.time || 0));
+    // ⭐ ترتيب السلة بأمان
+    if (Array.isArray(cart)) {
+        cart.sort((a,b)=> (b.time || 0) - (a.time || 0));
+    }
 
     cart.forEach((it,idx)=>{
         const price = (it.basePrice || 0) + (it.selectedOption?it.selectedOption.price:0);
@@ -854,6 +855,7 @@ function renderCart(){
         subtotal += price*it.qty;
         count += it.qty;
     });
+}
 
     const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
     const currentDeliveryFee = deliveryType === 'delivery' ? branchDeliveryFee : 0;
