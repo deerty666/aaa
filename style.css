@@ -653,3 +653,96 @@ header img {
         background-position: 468px 0;
     }
 }
+/* ================================
+   ⭐ VIP UI – Glass + Gold Upgrade
+   ================================ */
+
+/* خلفية عامة فخمة */
+body {
+    background: radial-gradient(circle at top, #1f1915, #0f0c0a);
+}
+
+/* Glass Effect */
+.card,
+#cartDrawer,
+.modal-content,
+.sec-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* بطاقات الوجبات */
+.card {
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.4);
+}
+.card img {
+    transition: transform .3s ease;
+}
+.card:hover img {
+    transform: scale(1.05);
+}
+
+/* زر الإضافة */
+.card .add-btn {
+    font-size: 1.05rem;
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+.card .add-btn::before {
+    content: "🛒";
+}
+
+/* شارة الأكثر مبيعاً */
+.best-seller-badge {
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* الأقسام */
+.sec-card {
+    transition: all .25s ease;
+}
+.sec-card:hover {
+    transform: translateY(-4px);
+}
+.sec-card.active {
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #2e2925, #1a1512);
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(195,158,106,.6);
+}
+
+/* زر السلة العائم */
+#cartBtn {
+    background: linear-gradient(135deg, #E8C065, #b48b4a);
+    color: #1A1512;
+    border-radius: 60px;
+    padding: 16px 22px;
+    font-size: 1.3rem;
+}
+
+/* الإجمالي النهائي */
+.final-total-line {
+    background: rgba(195,158,106,.1);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+/* Micro interaction */
+button:active {
+    transform: scale(0.95);
+}
