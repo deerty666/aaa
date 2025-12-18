@@ -816,27 +816,31 @@ function renderCart(){
     cartItemsEl.innerHTML='';
     let subtotal = 0;
     let count = 0;
-    const branchDeliveryFee = currentBranch.deliveryFee || 0; // رسوم التوصيل من بيانات الفرع
+    const branchDeliveryFee = currentBranch.deliveryFee || 0;
 
-    // ⭐ ترتيب السلة بأمان
+    // ترتيب السلة
     if (Array.isArray(cart)) {
         cart.sort((a,b)=> (b.time || 0) - (a.time || 0));
     }
 
     cart.forEach((it,idx)=>{
-        const price = (it.basePrice || 0) + (it.selectedOption?it.selectedOption.price:0);
-        const row=document.createElement('div');
-        row.className='cart-row';
+        const price = (it.basePrice || 0) + (it.selectedOption ? it.selectedOption.price : 0);
+        const row = document.createElement('div');
+        row.className = 'cart-row';
 
-        const noteHtml = it.note ? `<div class="item-note-display">📝 ملاحظة: ${it.note}</div>` : '';
+        const noteHtml = it.note
+            ? `<div class="item-note-display">📝 ملاحظة: ${it.note}</div>`
+            : '';
 
-        row.innerHTML=`
-            <div style="flex-grow:1; min-width: 60%">
+        row.innerHTML = `
+            <div style="flex-grow:1; min-width:60%">
                 <div style="font-weight:800">
                     ${it.name}
-                    ${it.selectedOption && !['نفر','طبق','عبوة'].includes(it.selectedOption.name) ? ' — '+it.selectedOption.name : ''}
+                    ${it.selectedOption && !['نفر','طبق','عبوة'].includes(it.selectedOption.name)
+                        ? ' — ' + it.selectedOption.name
+                        : ''}
                 </div>
-                <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">
+                <div style="font-size:.9rem;color:rgba(255,255,255,.7)">
                     ${it.qty} × ${price} ريال
                 </div>
                 ${noteHtml}
@@ -851,15 +855,15 @@ function renderCart(){
                 </button>
             </div>
         `;
+
         cartItemsEl.appendChild(row);
-        subtotal += price*it.qty;
+        subtotal += price * it.qty;
         count += it.qty;
     });
-}
 
     const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
     const currentDeliveryFee = deliveryType === 'delivery' ? branchDeliveryFee : 0;
-    let finalTotal = subtotal + currentDeliveryFee;
+    const finalTotal = subtotal + currentDeliveryFee;
 
     totalBreakdownEl.innerHTML = `
         <div class="total-line">
@@ -876,9 +880,9 @@ function renderCart(){
         </div>
     `;
 
-    cartCount.innerText=count;
-    cartCount.style.display=count===0?'none':'inline-block';
-    localStorage.setItem('deerty_cart',JSON.stringify(cart));
+    cartCount.innerText = count;
+    cartCount.style.display = count === 0 ? 'none' : 'inline-block';
+    localStorage.setItem('deerty_cart', JSON.stringify(cart));
 }
 
 
