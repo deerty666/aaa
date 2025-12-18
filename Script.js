@@ -861,10 +861,10 @@ function renderCart(){
         count += it.qty;
     });
 
-    const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
-    const currentDeliveryFee = deliveryType === 'delivery' ? branchDeliveryFee : 0;
-    const finalTotal = subtotal + currentDeliveryFee;
-
+    const deliveryTypeEl = document.querySelector('input[name="deliveryType"]:checked');
+const deliveryType = deliveryTypeEl ? deliveryTypeEl.value : 'pickup';
+const currentDeliveryFee = deliveryType === 'delivery' ? branchDeliveryFee : 0;
+const finalTotal = subtotal + currentDeliveryFee;
     totalBreakdownEl.innerHTML = `
         <div class="total-line">
             <span>إجمالي المنتجات:</span>
