@@ -786,27 +786,41 @@ function flashCartButton() {
 
 function addToCart(item){
     const obj={...item};
-    // حذف كل الخصائص المتعلقة بالمنطق
     delete obj.branchDiscounts; 
     delete obj.isBestSeller; 
     delete obj.availableIn; 
 
-    const key = obj.id + (obj.selectedOption?`-${obj.selectedOption.name}`:'') + (obj.note ? `-${obj.note}` : '');
+    const key = obj.id 
+      + (obj.selectedOption?`-${obj.selectedOption.name}`:'') 
+      + (obj.note ? `-${obj.note}` : '');
+
     const found = cart.find(i=>i.key===key);
-    if(found) found.qty+=1;
-    else cart.push({...obj,key});
+
+    if(found){
+        found.qty += 1;
+    }else{
+        cart.push({
+            ...obj,
+            key,
+            qty: 1,
+            time: Date.now() // ⭐ الإضافة هنا
+        });
+    }
 
     saveCart();
     flashCartButton();
 }
 
-
 /* ====== renderCart - عرض الإجمالي التفصيلي باستخدام رسوم الفرع الحالي ====== */
+function renderCart(){
 function renderCart(){
     cartItemsEl.innerHTML='';
     let subtotal = 0;
     let count = 0;
     const branchDeliveryFee = currentBranch.deliveryFee || 0; // رسوم التوصيل من بيانات الفرع
+
+    // ⭐ ترتيب السلة: أحدث عنصر بالأعلى
+    cart.sort((a,b)=> (b.time || 0) - (a.time || 0));
 
     cart.forEach((it,idx)=>{
         const price = (it.basePrice || 0) + (it.selectedOption?it.selectedOption.price:0);
@@ -817,15 +831,23 @@ function renderCart(){
 
         row.innerHTML=`
             <div style="flex-grow:1; min-width: 60%">
-                <div style="font-weight:800">${it.name}${it.selectedOption && it.selectedOption.name !== 'نفر' && it.selectedOption.name !== 'طبق' && it.selectedOption.name !== 'عبوة'?' — '+it.selectedOption.name:''}</div>
-                <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">${it.qty} × ${price} ريال</div>
+                <div style="font-weight:800">
+                    ${it.name}
+                    ${it.selectedOption && !['نفر','طبق','عبوة'].includes(it.selectedOption.name) ? ' — '+it.selectedOption.name : ''}
+                </div>
+                <div style="font-size:0.9rem;color:rgba(255,255,255,0.7)">
+                    ${it.qty} × ${price} ريال
+                </div>
                 ${noteHtml}
             </div>
             <div class="controls">
                 <button onclick="updateQty(${idx},-1)">-</button>
                 <div style="min-width:26px;text-align:center">${it.qty}</div>
                 <button onclick="updateQty(${idx},1)">+</button>
-                <button onclick="removeItem(${idx})" style="margin-left:6px;background:var(--red);color:#fff;padding:6px;border-radius:6px;border:none;cursor:pointer">حذف</button>
+                <button onclick="removeItem(${idx})"
+                    style="margin-left:6px;background:var(--red);color:#fff;padding:6px;border-radius:6px;border:none;cursor:pointer">
+                    حذف
+                </button>
             </div>
         `;
         cartItemsEl.appendChild(row);
@@ -837,7 +859,6 @@ function renderCart(){
     const currentDeliveryFee = deliveryType === 'delivery' ? branchDeliveryFee : 0;
     let finalTotal = subtotal + currentDeliveryFee;
 
-    // عرض الإجمالي التفصيلي
     totalBreakdownEl.innerHTML = `
         <div class="total-line">
             <span>إجمالي المنتجات:</span>
@@ -857,32 +878,6 @@ function renderCart(){
     cartCount.style.display=count===0?'none':'inline-block';
     localStorage.setItem('deerty_cart',JSON.stringify(cart));
 }
-
-
-function updateQty(idx,change){ 
-    if(!cart[idx]) return; 
-    cart[idx].qty+=change; 
-    if(cart[idx].qty<1) cart.splice(idx,1); 
-    saveCart(); 
-}
-
-
-function removeItem(idx){ 
-    cart.splice(idx,1); 
-    saveCart(); 
-}
-
-
-clearCart.onclick = ()=>{
-    cart = [];
-    saveCart();
-}
-
-
-document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
-    radio.addEventListener('change', renderCart); 
-});
-
 
 
 /* ====== Cart UI and WhatsApp - يستخدم رقم الواتساب الخاص بالفرع ====== */
