@@ -178,20 +178,6 @@ header img {
     }
 }
 
-.card {
-    background: linear-gradient(160deg, #1F6E8C, #0B3C5D);
-    border-radius: 18px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    padding-bottom: 14px;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.45),
-        0 0 12px rgba(201,162,77,.15); /* لمسة ذهبية خفيفة */
-}
-
 .card img {
     width: 100%;
     height: 120px;
