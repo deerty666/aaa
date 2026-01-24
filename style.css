@@ -181,9 +181,17 @@ header img {
 }
 
 .card p {
-    margin: 0 10px 8px;
-    font-size: 0.8rem;
-    color: var(--gold); /* لون القسم بلون مميز */
+    margin: 0 10px 6px;
+    color: rgba(255,255,255,.8);
+    font-size: 0.85rem;
+}
+
+/* 📝 وصف البوكسات */
+.item-desc {
+    color: #E3F4FF;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 6px 12px 10px;
 }
 
 .card .price {
