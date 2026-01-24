@@ -159,19 +159,12 @@ header img {
 /* 🍽️ 4. بطاقات الوجبات (Menu Cards) */
 /* ================================================= */
 #menuList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
+    display: flex;
+    flex-direction: column; /* كرت فوق كرت */
+    gap: 20px;
     padding: 0 15px;
-}
-
-@media (min-width: 600px) {
-    #menuList {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .card {
