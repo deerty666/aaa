@@ -24,9 +24,9 @@ if (urlParams.has('branch')) {
     currentBranchId = urlParams.get('branch');
 }
 const currentBranch = BRANCH_CONFIG[currentBranchId] || BRANCH_CONFIG['branch1'];
-document.title = `قائمة سحايب ديرتي - فرع ${currentBranch.name}`; // تحديث عنوان الصفحة باسم الفرع
+document.title = `قائمة  - فرع ${currentBranch.name}`; // تحديث عنوان الصفحة باسم الفرع
 
-/* ====== بيانات المنيو - تم تحديث جميع مسارات الصور إلى صيغة WEBP وباسم قصير (مثال: /Dirty55/sh01.webp) ====== */
+/* ====== بيانات المنيو - تم تحديث جميع مسارات الصور إلى صيغة WEBP وباسم قصير (مثال:sh01.webp) ====== */
 const menuData = [
     // 1. القسم الجديد: الكل
     { 
@@ -279,7 +279,7 @@ function processMenuData(data) {
     if (bestSellers.length > 0) {
         let bestSellerSection = {
             section: "الأكثر مبيعاً 🏆", 
-            sectionImg: "/Dirty55/best_seller_icon.webp", 
+            sectionImg: "best_seller_icon.webp", 
             items: bestSellers,
             sectionAvailableIn: ['branch1', 'branch2', 'branch3'] 
         };
@@ -703,7 +703,7 @@ sendWhatsapp.addEventListener('click', () => {
 
     const deliveryType = document.querySelector('input[name="deliveryType"]:checked')?.value;
     // 📍 متغيرات رسائل الواتساب
-    const lines=['طلب جديد من مطاعم سحايب ديرتي:'];
+    const lines=['طلب جديد من مطاعم :'];
     let subtotal = 0;
 
     cart.forEach(it=>{
@@ -767,7 +767,7 @@ function requestNotificationPermission() {
         if (permission === 'granted') {
             console.log("Notification permission granted.");
             // إشعار ترحيبي
-            new Notification('أهلاً بك في سحايب ديرتي!', {
+            new Notification('أهلاً بك في الجنوب للاسماك!', {
                 body: 'تم تفعيل الإشعارات بنجاح. سنعلمك بأحدث العروض!',
                 icon: '/Dirty55/Icon-192.png' 
             });
