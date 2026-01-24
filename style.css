@@ -160,9 +160,10 @@ header img {
 /* ================================================= */
 /* 🍽️ 4. بطاقات الوجبات (Menu Cards) */
 /* ================================================= */
+/* 📱 الجوال – كرت واحد فوق واحد */
 #menuList {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: 1fr;
     gap: 15px;
     padding: 0 15px;
 }
@@ -173,6 +174,12 @@ header img {
         gap: 20px;
         max-width: 1200px;
         margin: 0 auto;
+    }
+}
+/* 🍎 تأكيد ترتيب الآيفون */
+@media (max-width: 480px) {
+    #menuList {
+        grid-template-columns: 1fr !important;
     }
 }
 /* 🍽️ كرت الوجبة – لونين (كحلي + أزرق) */
