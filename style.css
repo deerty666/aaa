@@ -178,14 +178,13 @@ header img {
     }
 }
 /* 🍽️ كرت الوجبة – لونين (كحلي + أزرق) */
+/* 🍽️ بطاقة الوجبة */
 .card {
-    background:
-        linear-gradient(
-            160deg,
-            #0F2A3A,  /* كحلي غامق */
-            #0B3C5D   /* أزرق بحري */
-        ),
-        rgba(255,255,255,0.03);
+    background: linear-gradient(
+        160deg,
+        #0F2A3A,
+        #0B3C5D
+    );
 
     border-radius: 18px;
     overflow: hidden;
@@ -194,15 +193,20 @@ header img {
     position: relative;
     padding-bottom: 14px;
 
-    transition: transform .25s ease, box-shadow .25s ease;
+    /* ⭐ إطار ذهبي ناعم */
+    border: 1.5px solid rgba(201, 162, 77, 0.45);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.45),
+        0 0 12px rgba(201,162,77,.25);
+
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
-.card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 18px; /* نفس الكرت */
-    border: 1.5px solid rgba(201, 162, 77, 0.45); /* ذهبي ناعم */
-    pointer-events: none;
+
+/* ✨ تفاعل عند اللمس */
+.card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(201, 162, 77, 0.8);
 }
 .card img {
     width: 100%;
