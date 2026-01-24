@@ -2,20 +2,21 @@
 /* 🌙 1. الألوان والمتغيرات العامة (لدعم الوضع الداكن) */
 /* ================================================= */
 :root {
-    /* الألوان الأساسية */
-    --gold: #c39e6a;
-    --old-brown: #1A1512;
-    --light-text: #fff;
-    --red: #D32F2F;
+    :root {
+    /* 🌊 الأزرق البحري */
+    --blue-dark: #0B3C5D;      /* بحر عميق – الخلفيات */
+    --blue-main: #1F6E8C;      /* الكروت */
+    --blue-light: #4FC3F7;     /* أزرار / تفاعل */
 
-    /* ألوان الوضع الداكن */
-    --body-bg: #121212; /* خلفية الصفحة */
-    --header-bg: #1e1e1e; /* خلفية الشريط العلوي */
-    --search-bg: #272727; /* خلفية شريط البحث */
-    --card-bg: #1e1e1e; /* خلفية بطاقة المنتج */
-    --card-bg-dark: #1A1512; /* خلفية البطاقة الأغمق (للسلة والإشعارات) */
-    --section-card-bg: #272727; /* خلفية بطاقة القسم */
-    --border-color: #333; /* لون الحدود */
+    /* 🤍 الأبيض */
+    --white: #FFFFFF;
+    --soft-white: #F5F9FC;
+
+    /* 👑 الذهبي (لمسات فقط) */
+    --gold: #C9A24D;
+
+    /* ⚠️ تنبيه */
+    --red: #C62828;
 }
 
 * {
@@ -23,16 +24,9 @@
     font-family: 'Cairo', sans-serif;
     transition: all 0.2s ease-out; /* حركة سلسة للمتغيرات */
 }
-
 body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--body-bg);
-    color: var(--light-text);
-    padding-bottom: 90px; /* مسافة لزر السلة العائم */
-    direction: rtl;
-    text-align: right;
-    font-size: 16px;
+    background: linear-gradient(180deg, #0B3C5D, #06283D);
+    color: var(--white);
 }
 
 /* ================================================= */
@@ -168,14 +162,9 @@ header img {
 }
 
 .card {
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    padding-bottom: 10px;
+    background: linear-gradient(160deg, var(--blue-main), var(--blue-dark));
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
 }
 
 .card img {
@@ -187,10 +176,8 @@ header img {
 }
 
 .card h3 {
-    margin: 0 10px 5px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--light-text);
+    color: var(--white);
+    font-weight: 800;
 }
 
 .card p {
@@ -200,26 +187,17 @@ header img {
 }
 
 .card .price {
-    margin: 0 10px 10px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--light-text);
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    color: var(--gold);
+    font-size: 1.4rem;
+    font-weight: 900;
 }
 
 .card .add-btn {
-    background-color: var(--gold);
-    color: var(--old-brown);
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    margin: 0 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 0.95rem;
+    background: linear-gradient(135deg, var(--blue-light), var(--blue-main));
+    color: var(--white);
+    border-radius: 14px;
+    font-size: 1.1rem;
+    border: 1px solid rgba(201,162,77,.5); /* ذهبي خفيف */
 }
 
 .card .add-btn:hover {
@@ -691,13 +669,15 @@ body {
     align-items: center;
     gap: 8px;
 }
-.card .add-btn::before {
-    content: "🛒";
+.best-seller-badge {
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    color: #1a1a1a;
 }
 
 /* شارة الأكثر مبيعاً */
 .best-seller-badge {
-    animation: pulse 1.5s infinite;
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    color: #1a1a1a;
 }
 @keyframes pulse {
     0% { transform: scale(1); }
@@ -713,10 +693,8 @@ body {
     transform: translateY(-4px);
 }
 .sec-card.active {
-    transform: scale(1.1);
-    background: linear-gradient(135deg, #2e2925, #1a1512);
     border-color: var(--gold);
-    box-shadow: 0 0 15px rgba(195,158,106,.6);
+    box-shadow: 0 0 15px rgba(201,162,77,.6);
 }
 
 /* زر السلة العائم */
