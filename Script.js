@@ -447,13 +447,16 @@ function renderMenu(sectionName, searchTerm = ''){
         const card=document.createElement('div');
         card.className='card' + cardClassAddition; 
         card.innerHTML=`
-            <img src="${item.img}" alt="${item.name}" onerror="this.style.opacity=.35">
-            ${bestSellerBadge} 
-            <h3>${item.name}</h3>
-            <p>${displayedSection}</p>
-            <div class="price">${priceDisplay}</div>
-            <button class="add-btn" ${buttonAttributes}>${buttonText}</button> 
-        `;
+    <img src="${item.img}" alt="${item.name}" onerror="this.style.opacity=.35">
+    ${bestSellerBadge} 
+    <h3>${item.name}</h3>
+    <p>${displayedSection}</p>
+
+    ${item.description ? `<div class="item-desc">${item.description}</div>` : ''}
+
+    <div class="price">${priceDisplay}</div>
+    <button class="add-btn" ${buttonAttributes}>${buttonText}</button> 
+`;
 
         if (isAvailable) {
             card.querySelector('button').onclick = function() {
