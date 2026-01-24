@@ -3,19 +3,29 @@
 /* ================================================= */
 :root {
     /* 🌊 الأزرق البحري */
-    --blue-dark: #0B3C5D;      /* بحر عميق – الخلفيات */
-    --blue-main: #1F6E8C;      /* الكروت */
-    --blue-light: #4FC3F7;     /* أزرار / تفاعل */
+    --blue-dark: #0B3C5D;
+    --blue-main: #1F6E8C;
+    --blue-light: #4FC3F7;
 
     /* 🤍 الأبيض */
     --white: #FFFFFF;
     --soft-white: #F5F9FC;
+    --light-text: #EAF6FF;
 
-    /* 👑 الذهبي (لمسات فقط) */
+    /* 👑 الذهبي */
     --gold: #C9A24D;
 
     /* ⚠️ تنبيه */
     --red: #C62828;
+
+    /* 🧱 إضافات ناقصة */
+    --header-bg: #0B3C5D;
+    --search-bg: rgba(255,255,255,0.08);
+    --border-color: rgba(255,255,255,0.15);
+    --old-brown: #1a1a1a;
+    --section-card-bg: rgba(255,255,255,0.06);
+    --card-bg-dark: rgba(10,10,10,0.9);
+    --body-bg: #06283D;
 }
 
 * {
@@ -663,14 +673,9 @@ header img {
         background-position: 468px 0;
     }
 }
-/* ================================
-   ⭐ VIP UI – Glass + Gold Upgrade
-   ================================ */
-
-/* خلفية عامة فخمة */
-body {
-    background: radial-gradient(circle at top, #1f1915, #0f0c0a);
-}
+/* ================================*/
+  /* ⭐ VIP UI – Glass + Gold Upgrade*/
+  /* ================================ */
 
 /* Glass Effect */
 .card,
