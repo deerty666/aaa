@@ -33,10 +33,8 @@
     font-family: 'Cairo', sans-serif;
     transition: all 0.2s ease-out; /* حركة سلسة للمتغيرات */
 }
-
 body {
-    background: linear-gradient(180deg, #0B3C5D, #06283D);
-    color: var(--white);
+  background: linear-gradient(180deg, #0B3C5D, #06283D);
 }
 
 /* ================================================= */
@@ -178,13 +176,13 @@ header img {
     }
 }
 /* 🍽️ كرت الوجبة – لونين (كحلي + أزرق) */
-/* 🍽️ بطاقة الوجبة */
+
 .card {
-    background: linear-gradient(
-        160deg,
-        #0F2A3A,
-        #0B3C5D
-    );
+  background: linear-gradient(
+    160deg,
+    #134E6F,   /* أزرق متوسط */
+    #0B3C5D    /* أزرق أغمق */
+  );
 
     border-radius: 18px;
     overflow: hidden;
