@@ -270,6 +270,7 @@ button{
 <button class="red" onclick="deleteCustomer()">
 🗑 حذف العميل
 </button>
+  <button class="gold" onclick="backupData()">💾 حفظ نسخة على الجوال</button>
   <button onclick="sendWhatsApp()" class="green">إرسال نص واتساب</button>
   <button onclick="shareInvoicePDF()" class="green">إرسال الفاتورة PDF واتساب</button>
   <button onclick="window.print()" class="gold">طباعة / حفظ PDF</button>
@@ -455,6 +456,24 @@ function addDebt(){
   renderDebts();
 
   alert("تم حفظ الفاتورة كاملة");
+}
+  function backupData(){
+
+    let data = {
+        customers: customers,
+        debts: debts
+    };
+
+    let blob = new Blob(
+        [JSON.stringify(data, null, 2)],
+        {type:"application/json"}
+    );
+
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "backup-debts.json";
+    a.click();
+
 }
 function formatDate(date){
   return new Date(date).toLocaleDateString("ar-SA",{
