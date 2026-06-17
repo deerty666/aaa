@@ -228,6 +228,11 @@ button{
   </div>
   <input id="debtDate" type="date">
   <input id="month" type="month">
+  <button type="button" onclick="addToCart()">
+➕ إضافة صنف للفاتورة
+</button>
+
+<div id="cartList"></div>
   <button onclick="addDebt()">إضافة للعميل</button>
 </div>
 
@@ -276,7 +281,7 @@ button{
 <script>
 let customers = JSON.parse(localStorage.getItem("customers") || "[]");
 let debts = JSON.parse(localStorage.getItem("debts") || "[]");
-
+let cart = [];
 let today = new Date();
 let currentMonth = today.toISOString().slice(0,7);
 let currentDate = today.toISOString().slice(0,10);
@@ -363,39 +368,94 @@ function renderCustomers(){
 
   renderDebts();
 }
+function addToCart(){
 
+ let product = productName.value.trim();
+ let p = Number(price.value);
+ let q = Number(qty.value);
+
+ if(!product || !p || !q){
+   alert("أكمل بيانات الصنف");
+   return;
+ }
+
+ cart.push({
+   product:product,
+   price:p,
+   qty:q,
+   total:p*q
+ });
+
+ renderCart();
+
+ productName.value="";
+ price.value="";
+ qty.value=1;
+}
+
+function renderCart(){
+
+ let html="";
+
+ cart.forEach((item,index)=>{
+
+   html += `
+   <div style="padding:10px;border:1px solid #ddd;margin:5px 0;border-radius:8px">
+   ${item.product}
+   × ${item.qty}
+   = ${item.total} ريال
+   <button onclick="removeCart(${index})">
+   حذف
+   </button>
+   </div>
+   `;
+
+ });
+
+ cartList.innerHTML = html;
+}
+
+function removeCart(index){
+ cart.splice(index,1);
+ renderCart();
+}
 function addDebt(){
+
   let customerId = customerSelect.value;
-  let product = productName.value.trim();
-  let p = Number(price.value);
-  let q = Number(qty.value);
   let date = debtDate.value;
   let m = month.value;
 
-  if(!customerId || !product || !p || !q || !date || !m){
-    alert("أكمل البيانات");
+  if(!customerId || !date || !m){
+    alert("اختر العميل والتاريخ والشهر");
     return;
   }
 
-  debts.push({
-    id:Date.now(),
-    customerId:customerId,
-    product:product,
-    price:p,
-    qty:q,
-    total:p*q,
-    date:date,
-    month:m
+  if(cart.length === 0){
+    alert("أضف أصناف للفاتورة أولاً");
+    return;
+  }
+
+  cart.forEach(item => {
+    debts.push({
+      id: Date.now() + Math.random(),
+      customerId: customerId,
+      product: item.product,
+      price: item.price,
+      qty: item.qty,
+      total: item.total,
+      date: date,
+      month: m
+    });
   });
 
-  productName.value="";
-  price.value="";
-  qty.value=1;
+  cart = [];
+  renderCart();
 
   save();
   renderDebts();
-}
 
+  alert("تم حفظ الفاتورة كاملة");
+}
 function formatDate(date){
   return new Date(date).toLocaleDateString("ar-SA",{
     year:"numeric",
