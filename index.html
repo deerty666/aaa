@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق ديون العملاء</title>
+<meta name="theme-color" content="#1b1510">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Tahoma,Arial;
+  background:#f5f1e8;
+  color:#1b1510;
+}
+header{
+  background:#1b1510;
+  color:#d6b06a;
+  padding:15px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+.container{
+  padding:12px;
+  max-width:900px;
+  margin:auto;
+}
+.card{
+  background:#fff;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 3px 12px #0002;
+}
+h3{margin-top:0}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
+button{
+  background:#1b1510;
+  color:white;
+  border:none;
+  font-weight:bold;
+}
+.gold{background:#c39e6a;color:#1b1510}
+.green{background:#166534}
+.red{background:#b91c1c}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.invoiceLogoBox{
+  text-align:center;
+  margin-bottom:8px;
+}
+.invoiceLogoBox img{
+  max-width:90px;
+  max-height:90px;
+}
+.invoiceTitle{
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  margin:8px 0;
+}
+.invoiceInfo{
+  text-align:center;
+  margin-bottom:10px;
+  color:#555;
+}
+.tableWrap{
+  overflow-x:auto;
+}
+.invoiceTable{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.invoiceTable th{
+  background:#1b1510;
+  color:#d6b06a;
+  padding:8px;
+  border:1px solid #ddd;
+}
+.invoiceTable td{
+  padding:7px;
+  border:1px solid #ddd;
+  text-align:center;
+}
+.invoiceTable tr:nth-child(even){
+  background:#fafafa;
+}
+.total{
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  color:#166534;
+  border:2px solid #166534;
+  border-radius:12px;
+  padding:10px;
+  margin-top:12px;
+}
+.installBtn{
+  position:fixed;
+  bottom:15px;
+  left:15px;
+  width:auto;
+  padding:12px 18px;
+  border-radius:30px;
+  background:#c39e6a;
+  color:#1b1510;
+  box-shadow:0 4px 14px #0004;
+  z-index:99;
+}
+
+/* وضع PDF صفحة واحدة */
+.pdfMode{
+  width:794px !important;
+  padding:16px !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  font-size:11px !important;
+}
+.pdfMode .invoiceLogoBox img{
+  max-width:60px !important;
+  max-height:60px !important;
+}
+.pdfMode .invoiceTitle{
+  font-size:20px !important;
+  margin:4px 0 !important;
+}
+.pdfMode .invoiceInfo{
+  font-size:11px !important;
+  margin-bottom:6px !important;
+}
+.pdfMode .invoiceTable{
+  font-size:10px !important;
+}
+.pdfMode .invoiceTable th,
+.pdfMode .invoiceTable td{
+  padding:4px !important;
+}
+.pdfMode .total{
+  font-size:16px !important;
+  padding:6px !important;
+  margin-top:8px !important;
+}
+
+@media print{
+  body{background:#fff;margin:0}
+  header,
+  .card:not(#invoiceCard),
+  button,
+  input,
+  select,
+  .installBtn{
+    display:none !important;
+  }
+  .container{
+    padding:0;
+    margin:0;
+    max-width:none;
+  }
+  #invoiceCard{
+    box-shadow:none;
+    border-radius:0;
+    margin:0;
+    padding:8mm;
+    width:100%;
+  }
+  .invoiceTable{
+    font-size:11px;
+  }
+  .invoiceTable th,
+  .invoiceTable td{
+    padding:4px;
+  }
+  .total{
+    font-size:16px;
+  }
+  @page{
+    size:A4;
+    margin:6mm;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>📒 تطبيق ديون العملاء</header>
+
+<button class="installBtn" id="installBtn" style="display:none">📲 تثبيت التطبيق</button>
+
+<div class="container">
+
+<div class="card">
+  <h3>إعدادات الشعار</h3>
+  <input id="logoInput" type="file" accept="image/*" onchange="saveLogo()">
+</div>
+
+<div class="card">
+  <h3>إضافة عميل</h3>
+  <input id="customerName" placeholder="اسم العميل">
+  <input id="customerPhone" placeholder="رقم الجوال">
+  <button class="gold" onclick="addCustomer()">حفظ العميل</button>
+</div>
+
+<div class="card">
+  <h3>إضافة دين / منتج</h3>
+  <select id="customerSelect"></select>
+  <input id="productName" placeholder="اسم الصنف / المنتج">
+  <div class="row">
+    <input id="price" type="number" placeholder="السعر">
+    <input id="qty" type="number" placeholder="الكمية" value="1">
+  </div>
+  <input id="debtDate" type="date">
+  <input id="month" type="month">
+  <button onclick="addDebt()">إضافة للعميل</button>
+</div>
+
+<div class="card" id="invoiceCard">
+  <div class="invoiceLogoBox">
+    <img id="invoiceLogo">
+  </div>
+
+  <div class="invoiceTitle">كشف حساب العميل</div>
+  <div class="invoiceInfo">
+    العميل: <span id="invoiceCustomerName">-</span><br>
+    الشهر: <span id="invoiceMonthName">-</span>
+  </div>
+
+  <select id="viewCustomer" onchange="renderDebts()"></select>
+  <input id="viewMonth" type="month" onchange="renderDebts()">
+
+  <div class="tableWrap">
+    <table class="invoiceTable">
+      <thead>
+        <tr>
+          <th>التاريخ</th>
+          <th>الصنف</th>
+          <th>الكمية</th>
+          <th>السعر</th>
+          <th>الإجمالي</th>
+          <th class="noPdf">حذف</th>
+        </tr>
+      </thead>
+      <tbody id="debtsList"></tbody>
+    </table>
+  </div>
+
+  <p class="total">إجمالي الشهر كامل: <span id="totalAmount">0</span> ريال</p>
+
+  <button onclick="sendWhatsApp()" class="green">إرسال نص واتساب</button>
+  <button onclick="shareInvoicePDF()" class="green">إرسال الفاتورة PDF واتساب</button>
+  <button onclick="window.print()" class="gold">طباعة / حفظ PDF</button>
+  <button onclick="clearMonth()" class="red">حذف ديون هذا الشهر</button>
+</div>
+
+</div>
+
+<script>
+let customers = JSON.parse(localStorage.getItem("customers") || "[]");
+let debts = JSON.parse(localStorage.getItem("debts") || "[]");
+
+let today = new Date();
+let currentMonth = today.toISOString().slice(0,7);
+let currentDate = today.toISOString().slice(0,10);
+
+month.value = currentMonth;
+viewMonth.value = currentMonth;
+debtDate.value = currentDate;
+
+function save(){
+  localStorage.setItem("customers", JSON.stringify(customers));
+  localStorage.setItem("debts", JSON.stringify(debts));
+}
+
+function saveLogo(){
+  let file = logoInput.files[0];
+  if(!file) return;
+
+  let reader = new FileReader();
+  reader.onload = function(e){
+    localStorage.setItem("restaurantLogo", e.target.result);
+    invoiceLogo.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadLogo(){
+  let logo = localStorage.getItem("restaurantLogo");
+  if(logo){
+    invoiceLogo.src = logo;
+  }
+}
+
+function addCustomer(){
+  let name = customerName.value.trim();
+  let phone = customerPhone.value.trim();
+
+  if(!name){
+    alert("اكتب اسم العميل");
+    return;
+  }
+
+  customers.push({
+    id:Date.now(),
+    name:name,
+    phone:phone
+  });
+
+  customerName.value="";
+  customerPhone.value="";
+  save();
+  renderCustomers();
+}
+
+function renderCustomers(){
+  customerSelect.innerHTML="";
+  viewCustomer.innerHTML="";
+
+  customers.forEach(c=>{
+    customerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    viewCustomer.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+  });
+
+  renderDebts();
+}
+
+function addDebt(){
+  let customerId = customerSelect.value;
+  let product = productName.value.trim();
+  let p = Number(price.value);
+  let q = Number(qty.value);
+  let date = debtDate.value;
+  let m = month.value;
+
+  if(!customerId || !product || !p || !q || !date || !m){
+    alert("أكمل البيانات");
+    return;
+  }
+
+  debts.push({
+    id:Date.now(),
+    customerId:customerId,
+    product:product,
+    price:p,
+    qty:q,
+    total:p*q,
+    date:date,
+    month:m
+  });
+
+  productName.value="";
+  price.value="";
+  qty.value=1;
+
+  save();
+  renderDebts();
+}
+
+function formatDate(date){
+  return new Date(date).toLocaleDateString("ar-SA",{
+    year:"numeric",
+    month:"numeric",
+    day:"numeric"
+  });
+}
+
+function formatMonth(month){
+  if(!month) return "-";
+  let d = new Date(month + "-01");
+  return d.toLocaleDateString("ar-SA",{
+    year:"numeric",
+    month:"long"
+  });
+}
+
+function renderDebts(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+
+  let customer = customers.find(c=>c.id == customerId);
+  invoiceCustomerName.innerText = customer ? customer.name : "-";
+  invoiceMonthName.innerText = formatMonth(m);
+
+  let list = debts
+    .filter(d=>d.customerId == customerId && d.month == m)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  debtsList.innerHTML="";
+
+  let totalAll = 0;
+
+  list.forEach(d=>{
+    totalAll += d.total;
+
+    debtsList.innerHTML += `
+      <tr>
+        <td>${formatDate(d.date)}</td>
+        <td>${d.product}</td>
+        <td>${d.qty}</td>
+        <td>${d.price}</td>
+        <td><b>${d.total}</b></td>
+        <td class="noPdf">
+          <button class="red" onclick="deleteDebt(${d.id})">حذف</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  totalAmount.innerText = totalAll;
+}
+
+function deleteDebt(id){
+  if(confirm("حذف العملية؟")){
+    debts = debts.filter(d=>d.id !== id);
+    save();
+    renderDebts();
+  }
+}
+
+function sendWhatsApp(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+  let customer = customers.find(c=>c.id == customerId);
+
+  if(!customer){
+    alert("اختر عميل");
+    return;
+  }
+
+  let list = debts
+    .filter(d=>d.customerId == customerId && d.month == m)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  if(list.length === 0){
+    alert("لا يوجد ديون لهذا الشهر");
+    return;
+  }
+
+  let totalAll = 0;
+
+  let msg = `كشف حساب العميل%0A`;
+  msg += `العميل: ${customer.name}%0A`;
+  msg += `الشهر: ${formatMonth(m)}%0A`;
+  msg += `--------------------%0A`;
+
+  list.forEach((d,i)=>{
+    totalAll += d.total;
+    msg += `${i+1}) ${formatDate(d.date)}%0A`;
+    msg += `الصنف: ${d.product}%0A`;
+    msg += `الكمية: ${d.qty}%0A`;
+    msg += `السعر: ${d.price} ريال%0A`;
+    msg += `الإجمالي: ${d.total} ريال%0A`;
+    msg += `--------------------%0A`;
+  });
+
+  msg += `إجمالي الشهر كامل: ${totalAll} ريال%0A`;
+  msg += `شكراً لكم`;
+
+  let phone = customer.phone.replace(/\D/g,"");
+  if(phone.startsWith("05")){
+    phone = "966" + phone.slice(1);
+  }
+
+  if(phone){
+    window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+  }else{
+    window.open(`https://wa.me/?text=${msg}`, "_blank");
+  }
+}
+
+async function shareInvoicePDF(){
+  let hidden = document.querySelectorAll("button,input,select,.noPdf");
+  hidden.forEach(e=>e.style.display="none");
+
+  const { jsPDF } = window.jspdf;
+  let invoice = document.getElementById("invoiceCard");
+
+  invoice.classList.add("pdfMode");
+
+  let canvas = await html2canvas(invoice,{
+    scale:2,
+    backgroundColor:"#ffffff"
+  });
+
+  let pdf = new jsPDF("p","mm","a4");
+
+  let pageWidth = 210;
+  let pageHeight = 297;
+  let margin = 5;
+
+  let imgWidth = pageWidth - margin * 2;
+  let imgHeight = canvas.height * imgWidth / canvas.width;
+
+  if(imgHeight > pageHeight - margin * 2){
+    imgHeight = pageHeight - margin * 2;
+    imgWidth = canvas.width * imgHeight / canvas.height;
+  }
+
+  let x = (pageWidth - imgWidth) / 2;
+  let y = margin;
+
+  pdf.addImage(
+    canvas.toDataURL("image/png"),
+    "PNG",
+    x,
+    y,
+    imgWidth,
+    imgHeight
+  );
+
+  let blob = pdf.output("blob");
+  let file = new File([blob],"كشف-حساب.pdf",{type:"application/pdf"});
+
+  invoice.classList.remove("pdfMode");
+  hidden.forEach(e=>e.style.display="");
+
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    await navigator.share({
+      title:"كشف حساب",
+      text:"كشف حساب العميل",
+      files:[file]
+    });
+  }else{
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "كشف-حساب.pdf";
+    a.click();
+    alert("تم حفظ PDF، أرسله من الواتساب كمرفق");
+  }
+}
+
+function clearMonth(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+
+  if(confirm("حذف كل ديون هذا العميل لهذا الشهر؟")){
+    debts = debts.filter(d=>!(d.customerId == customerId && d.month == m));
+    save();
+    renderDebts();
+  }
+}
+
+/* تثبيت كتطبيق */
+let deferredPrompt;
+let installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = "block";
+});
+
+installBtn.addEventListener("click", async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+  }
+});
+
+let manifest = {
+  name:"تطبيق ديون العملاء",
+  short_name:"الديون",
+  start_url:".",
+  display:"standalone",
+  background_color:"#f5f1e8",
+  theme_color:"#1b1510",
+  direction:"rtl",
+  lang:"ar",
+  icons:[
+    {
+      src:"icon-192.png",
+      sizes:"192x192",
+      type:"image/png"
+    },
+    {
+      src:"icon-512.png",
+      sizes:"512x512",
+      type:"image/png"
+    }
+  ]
+};
+
+let blob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
+let manifestURL = URL.createObjectURL(blob);
+let link = document.createElement("link");
+link.rel = "manifest";
+link.href = manifestURL;
+document.head.appendChild(link);
+
+loadLogo();
+renderCustomers();
+</script>
+
+</body>
+</html>
