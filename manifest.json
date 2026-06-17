@@ -1,0 +1,21 @@
+{
+  "name": "تطبيق ديون العملاء",
+  "short_name": "الديون",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f1e8",
+  "theme_color": "#1b1510",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "Icon-192 (2).png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
