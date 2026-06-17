@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تطبيق ديون العملاء</title>
 <meta name="theme-color" content="#1b1510">
+<link rel="manifest" href="manifest.json">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -597,16 +598,14 @@ let manifest = {
   ]
 };
 
-let blob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
-let manifestURL = URL.createObjectURL(blob);
-let link = document.createElement("link");
-link.rel = "manifest";
-link.href = manifestURL;
-document.head.appendChild(link);
 
 loadLogo();
 renderCustomers();
 </script>
-
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
 </body>
 </html>
