@@ -262,7 +262,9 @@ button{
   </div>
 
   <p class="total">إجمالي الشهر كامل: <span id="totalAmount">0</span> ريال</p>
-
+<button class="red" onclick="deleteCustomer()">
+🗑 حذف العميل
+</button>
   <button onclick="sendWhatsApp()" class="green">إرسال نص واتساب</button>
   <button onclick="shareInvoicePDF()" class="green">إرسال الفاتورة PDF واتساب</button>
   <button onclick="window.print()" class="gold">طباعة / حفظ PDF</button>
@@ -327,7 +329,29 @@ function addCustomer(){
   save();
   renderCustomers();
 }
+function deleteCustomer(){
 
+  let id = viewCustomer.value;
+
+  if(!id){
+    alert("اختر العميل أولاً");
+    return;
+  }
+
+  if(confirm("هل تريد حذف العميل وجميع ديونه؟")){
+
+    customers = customers.filter(c => c.id != id);
+
+    debts = debts.filter(d => d.customerId != id);
+
+    save();
+
+    renderCustomers();
+
+    alert("تم حذف العميل");
+
+  }
+}
 function renderCustomers(){
   customerSelect.innerHTML="";
   viewCustomer.innerHTML="";
