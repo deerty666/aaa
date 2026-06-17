@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تطبيق ديون العملاء</title>
+<meta name="theme-color" content="#1b1510">
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Tahoma,Arial;
+  background:#f5f1e8;
+  color:#1b1510;
+}
+header{
+  background:#1b1510;
+  color:#d6b06a;
+  padding:16px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+.container{
+  padding:12px;
+  max-width:900px;
+  margin:auto;
+}
+.card{
+  background:#fff;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 3px 12px #0002;
+}
+h3{margin-top:0}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
+button{
+  background:#1b1510;
+  color:#fff;
+  border:none;
+  font-weight:bold;
+}
+.gold{background:#c39e6a;color:#1b1510}
+.red{background:#b91c1c}
+.green{background:#166534}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.dayBox{
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:10px;
+  margin:10px 0;
+  background:#fafafa;
+}
+.dayTitle{
+  font-weight:bold;
+  color:#8a5a16;
+  margin-bottom:8px;
+}
+.item{
+  border-bottom:1px dashed #bbb;
+  padding:8px 0;
+}
+.item:last-child{border-bottom:none}
+.total{
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  color:#166534;
+}
+.small{font-size:13px;color:#666}
+.installBtn{
+  position:fixed;
+  bottom:15px;
+  left:15px;
+  width:auto;
+  padding:12px 18px;
+  border-radius:30px;
+  background:#c39e6a;
+  color:#1b1510;
+  box-shadow:0 4px 14px #0004;
+  z-index:99;
+}
+
+@media print{
+  body{background:#fff;margin:0}
+  header,
+  .card:not(#invoiceCard),
+  button,
+  input,
+  select,
+  .installBtn{
+    display:none !important;
+  }
+  .container{
+    padding:0;
+    margin:0;
+    max-width:none;
+  }
+  #invoiceCard{
+    display:block !important;
+    box-shadow:none;
+    border-radius:0;
+    margin:0;
+    padding:8mm;
+    width:100%;
+  }
+  #invoiceCard h3{
+    text-align:center;
+    font-size:18px;
+  }
+  .dayBox{
+    page-break-inside:avoid;
+    border:1px solid #999;
+    margin-bottom:8px;
+  }
+  .item{
+    font-size:13px;
+    padding:5px 0;
+  }
+  .total{
+    font-size:18px;
+    margin-top:10px;
+  }
+  @page{
+    size:A4;
+    margin:8mm;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>📒 تطبيق ديون العملاء</header>
+
+<button class="installBtn" id="installBtn" style="display:none">📲 تثبيت التطبيق</button>
+
+<div class="container">
+
+<div class="card">
+  <h3>إضافة عميل</h3>
+  <input id="customerName" placeholder="اسم العميل">
+  <input id="customerPhone" placeholder="رقم الجوال">
+  <button class="gold" onclick="addCustomer()">حفظ العميل</button>
+</div>
+
+<div class="card">
+  <h3>إضافة دين / منتج</h3>
+  <select id="customerSelect"></select>
+  <input id="productName" placeholder="اسم الصنف / المنتج">
+  <div class="row">
+    <input id="price" type="number" placeholder="السعر">
+    <input id="qty" type="number" placeholder="الكمية" value="1">
+  </div>
+  <input id="debtDate" type="date">
+  <input id="month" type="month">
+  <button onclick="addDebt()">إضافة للعميل</button>
+</div>
+
+<div class="card" id="invoiceCard">
+  <h3>كشف حساب العميل</h3>
+  <select id="viewCustomer" onchange="renderDebts()"></select>
+  <input id="viewMonth" type="month" onchange="renderDebts()">
+
+  <div id="debtsList"></div>
+
+  <p class="total">إجمالي جميع الأيام: <span id="totalAmount">0</span> ريال</p>
+
+  <button onclick="sendWhatsApp()" class="green">إرسال الكشف واتساب</button>
+  <button onclick="window.print()" class="gold">طباعة / حفظ PDF</button>
+  <button onclick="clearMonth()" class="red">حذف ديون هذا الشهر</button>
+</div>
+
+</div>
+
+<script>
+let customers = JSON.parse(localStorage.getItem("customers") || "[]");
+let debts = JSON.parse(localStorage.getItem("debts") || "[]");
+
+let today = new Date();
+let currentMonth = today.toISOString().slice(0,7);
+let currentDate = today.toISOString().slice(0,10);
+
+month.value = currentMonth;
+viewMonth.value = currentMonth;
+debtDate.value = currentDate;
+
+function save(){
+  localStorage.setItem("customers", JSON.stringify(customers));
+  localStorage.setItem("debts", JSON.stringify(debts));
+}
+
+function addCustomer(){
+  let name = customerName.value.trim();
+  let phone = customerPhone.value.trim();
+
+  if(!name){
+    alert("اكتب اسم العميل");
+    return;
+  }
+
+  customers.push({
+    id: Date.now(),
+    name,
+    phone
+  });
+
+  customerName.value="";
+  customerPhone.value="";
+  save();
+  renderCustomers();
+}
+
+function renderCustomers(){
+  customerSelect.innerHTML="";
+  viewCustomer.innerHTML="";
+
+  customers.forEach(c=>{
+    customerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    viewCustomer.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+  });
+
+  renderDebts();
+}
+
+function addDebt(){
+  let customerId = customerSelect.value;
+  let product = productName.value.trim();
+  let p = Number(price.value);
+  let q = Number(qty.value);
+  let date = debtDate.value;
+  let m = month.value;
+
+  if(!customerId || !product || !p || !q || !date || !m){
+    alert("أكمل البيانات");
+    return;
+  }
+
+  debts.push({
+    id: Date.now(),
+    customerId,
+    product,
+    price:p,
+    qty:q,
+    total:p*q,
+    date,
+    month:m
+  });
+
+  productName.value="";
+  price.value="";
+  qty.value=1;
+
+  save();
+  renderDebts();
+}
+
+function formatDate(date){
+  return new Date(date).toLocaleDateString("ar-SA",{
+    year:"numeric",
+    month:"long",
+    day:"numeric"
+  });
+}
+
+function renderDebts(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+
+  let list = debts.filter(d=>d.customerId == customerId && d.month == m);
+  debtsList.innerHTML="";
+
+  let totalAll = 0;
+  let grouped = {};
+
+  list.forEach(d=>{
+    if(!grouped[d.date]) grouped[d.date] = [];
+    grouped[d.date].push(d);
+  });
+
+  Object.keys(grouped).sort().forEach(date=>{
+    let dayTotal = 0;
+    let html = `<div class="dayBox">
+      <div class="dayTitle">📅 ${formatDate(date)}</div>`;
+
+    grouped[date].forEach(d=>{
+      dayTotal += d.total;
+      totalAll += d.total;
+
+      html += `
+        <div class="item">
+          <b>الصنف:</b> ${d.product}<br>
+          <b>الكمية:</b> ${d.qty}<br>
+          <b>السعر:</b> ${d.price} ريال<br>
+          <b>الإجمالي:</b> ${d.total} ريال
+          <button class="red" onclick="deleteDebt(${d.id})">حذف</button>
+        </div>
+      `;
+    });
+
+    html += `<b>إجمالي هذا اليوم: ${dayTotal} ريال</b></div>`;
+    debtsList.innerHTML += html;
+  });
+
+  totalAmount.innerText = totalAll;
+}
+
+function deleteDebt(id){
+  if(confirm("حذف العملية؟")){
+    debts = debts.filter(d=>d.id !== id);
+    save();
+    renderDebts();
+  }
+}
+
+function sendWhatsApp(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+  let customer = customers.find(c=>c.id == customerId);
+
+  if(!customer){
+    alert("اختر عميل");
+    return;
+  }
+
+  let list = debts.filter(d=>d.customerId == customerId && d.month == m);
+
+  if(list.length === 0){
+    alert("لا يوجد ديون لهذا الشهر");
+    return;
+  }
+
+  let grouped = {};
+  let totalAll = 0;
+
+  list.forEach(d=>{
+    if(!grouped[d.date]) grouped[d.date] = [];
+    grouped[d.date].push(d);
+  });
+
+  let msg = `كشف حساب شهر ${m}%0A`;
+  msg += `العميل: ${customer.name}%0A`;
+  msg += `--------------------%0A`;
+
+  Object.keys(grouped).sort().forEach(date=>{
+    let dayTotal = 0;
+    msg += `📅 ${formatDate(date)}%0A`;
+
+    grouped[date].forEach(d=>{
+      dayTotal += d.total;
+      totalAll += d.total;
+
+      msg += `الصنف: ${d.product}%0A`;
+      msg += `الكمية: ${d.qty}%0A`;
+      msg += `السعر: ${d.price} ريال%0A`;
+      msg += `الإجمالي: ${d.total} ريال%0A`;
+      msg += `---%0A`;
+    });
+
+    msg += `إجمالي اليوم: ${dayTotal} ريال%0A`;
+    msg += `--------------------%0A`;
+  });
+
+  msg += `إجمالي جميع الأيام: ${totalAll} ريال%0A`;
+  msg += `شكراً لكم`;
+
+  let phone = customer.phone.replace(/\D/g,"");
+  if(phone.startsWith("05")){
+    phone = "966" + phone.slice(1);
+  }
+
+  if(phone){
+    window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+  }else{
+    window.open(`https://wa.me/?text=${msg}`, "_blank");
+  }
+}
+
+function clearMonth(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+
+  if(confirm("حذف كل ديون هذا العميل لهذا الشهر؟")){
+    debts = debts.filter(d=>!(d.customerId == customerId && d.month == m));
+    save();
+    renderDebts();
+  }
+}
+
+/* تثبيت كتطبيق */
+let deferredPrompt;
+let installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = "block";
+});
+
+installBtn.addEventListener("click", async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+  }
+});
+
+/* Manifest داخل نفس الملف */
+let manifest = {
+  name:"تطبيق ديون العملاء",
+  short_name:"الديون",
+  start_url:".",
+  display:"standalone",
+  background_color:"#f5f1e8",
+  theme_color:"#1b1510",
+  direction:"rtl",
+  lang:"ar",
+  icons:[
+    {
+      src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192'><rect width='100%' height='100%' fill='%231b1510'/><text x='50%' y='55%' font-size='90' text-anchor='middle' fill='%23d6b06a'>د</text></svg>",
+      sizes:"192x192",
+      type:"image/svg+xml"
+    },
+    {
+      src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512'><rect width='100%' height='100%' fill='%231b1510'/><text x='50%' y='55%' font-size='240' text-anchor='middle' fill='%23d6b06a'>د</text></svg>",
+      sizes:"512x512",
+      type:"image/svg+xml"
+    }
+  ]
+};
+
+let blob = new Blob([JSON.stringify(manifest)], {type:"application/json"});
+let manifestURL = URL.createObjectURL(blob);
+let link = document.createElement("link");
+link.rel = "manifest";
+link.href = manifestURL;
+document.head.appendChild(link);
+
+renderCustomers();
+</script>
+
+</body>
+</html>
