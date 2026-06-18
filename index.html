@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام إدارة ديون ومدفوعات العملاء</title>
+<meta name="theme-color" content="#1b1510">
+<link rel="manifest" href="manifest.json">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+*{box-sizing:border-box; transition: all 0.2s ease;}
+body{
+  margin:0;
+  font-family:Tahoma, Arial, sans-serif;
+  background:#f8f6f0;
+  color:#2d251e;
+  line-height: 1.6;
+}
+header{
+  background:#1b1510;
+  color:#d6b06a;
+  padding:20px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.container{
+  padding:15px;
+  max-width:950px;
+  margin:auto;
+}
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow: 0 4px 20px rgba(27,21,16,0.06);
+  border: 1px solid rgba(27,21,16,0.03);
+}
+h3{
+  margin-top:0; 
+  color: #1b1510; 
+  border-bottom: 2px solid #c39e6a; 
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #dcd6cd;
+  font-size:15px;
+  background: #fdfcf9;
+}
+input:focus, select:focus{
+  outline: none;
+  border-color: #c39e6a;
+  box-shadow: 0 0 0 3px rgba(195,158,106,0.2);
+}
+button{
+  background:#1b1510;
+  color:white;
+  border:none;
+  font-weight:bold;
+  cursor: pointer;
+}
+button:hover{
+  background: #2d251e;
+  opacity: 0.9;
+}
+.gold{background:#c39e6a; color:#1b1510}
+.gold:hover{background:#b28e59}
+.green{background:#166534; color: white}
+.green:hover{background:#114f29}
+.red{background:#b91c1c; color: white}
+.red:hover{background:#991717}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.cartBox{
+  background:#fffdf9;
+  border:1px solid #eaddca;
+  border-radius:12px;
+  padding:15px;
+  margin:12px 0;
+}
+.cartItem{
+  border-bottom:1px dashed #dcd6cd;
+  padding:10px 0;
+}
+.cartItem:last-child{border-bottom:none}
+.cartTotal{
+  font-size:18px;
+  font-weight:bold;
+  color:#166534;
+  text-align:center;
+  margin-top:10px;
+}
+.invoiceLogoBox{
+  text-align:center;
+  margin-bottom:15px;
+}
+.invoiceLogoBox svg {
+  width: 80px;
+  height: 80px;
+  fill: #1b1510;
+}
+.invoiceTitle{
+  text-align:center;
+  font-size:26px;
+  font-weight:bold;
+  color: #1b1510;
+  margin:10px 0;
+}
+.invoiceInfo{
+  text-align:center;
+  margin-bottom:15px;
+  color:#605246;
+  font-size: 15px;
+  background: #f1ede2;
+  padding: 10px;
+  border-radius: 10px;
+}
+.tableWrap{
+  overflow-x:auto;
+  margin: 15px 0;
+  border:1px solid #eaddca;
+  border-radius:12px;
+}
+.invoiceTable{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.invoiceTable th{
+  background:#1b1510;
+  color:#d6b06a;
+  padding:12px 8px;
+  border:1px solid #eaddca;
+}
+.invoiceTable td{
+  padding:10px 8px;
+  border:1px solid #eaddca;
+  text-align:center;
+}
+.invoiceTable tr:nth-child(even){
+  background:#fffdf9;
+}
+.summaryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+}
+.summaryCard {
+  text-align: center;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 15px;
+}
+.summaryCard.debt { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+.summaryCard.paid { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.summaryCard.net { background: #fef9c3; color: #a16207; border: 1px solid #fef08a; font-size: 18px; grid-column: span 3; }
+
+.installBtn{
+  position:fixed;
+  bottom:15px;
+  left:15px;
+  width:auto;
+  padding:12px 18px;
+  border-radius:30px;
+  background:#c39e6a;
+  color:#1b1510;
+  box-shadow:0 4px 14px rgba(0,0,0,0.25);
+  z-index:99;
+}
+.smallBtn{
+  font-size:13px;
+  padding:6px 10px;
+  width: auto;
+  display: inline-block;
+  margin: 2px;
+}
+.actionFields {
+  background: #fcfbfa;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #eaddca;
+  margin-top: 10px;
+}
+
+/* وضع PDF وبث الطباعة */
+.pdfMode{
+  width:794px !important;
+  padding:20px !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+@media print{
+  body{background:#fff;margin:0}
+  header, .card:not(#invoiceCard), button, input, select, .installBtn, .noPrint, .noPdf{
+    display:none !important;
+  }
+  .container{ padding:0; margin:0; max-width:none; }
+  #invoiceCard{ box-shadow:none; border-radius:0; margin:0; padding:10mm; width:100%; }
+  .invoiceTable th { background: #1b1510 !important; color: #d6b06a !important; -webkit-print-color-adjust: exact; }
+  @page{ size:A4; margin:8mm; }
+}
+</style>
+</head>
+
+<body>
+
+<header>📒 نظام إدارة ديون ومدفوعات العملاء</header>
+
+<button class="installBtn" id="installBtn" style="display:none">📲 تثبيت التطبيق</button>
+
+<div class="container">
+
+<div class="card">
+  <h3 id="customerFormTitle">إضافة عميل جديد</h3>
+  <input id="customerIdField" type="hidden">
+  <input id="customerName" placeholder="اسم العميل الكامل">
+  <input id="customerPhone" placeholder="رقم الجوال (مثال: 05xxxxxxx)">
+  <div class="row">
+    <button class="gold" id="saveCustomerBtn" onclick="addCustomer()">حفظ العميل</button>
+    <button class="red" id="cancelEditBtn" onclick="resetCustomerForm()" style="display:none">إلغاء التعديل</button>
+  </div>
+</div>
+
+<div class="card">
+  <h3>إضافة دين / منتج جديد</h3>
+  <label for="customerSelect">اختر العميل:</label>
+  <select id="customerSelect"></select>
+  <input id="productName" placeholder="اسم الصنف / المنتج / البيان">
+  <div class="row">
+    <input id="price" type="number" placeholder="السعر">
+    <input id="qty" type="number" placeholder="الكمية" value="1">
+  </div>
+  <div class="row">
+    <div>
+      <label style="font-size:12px">تاريخ الفاتورة:</label>
+      <input id="debtDate" type="date">
+    </div>
+    <div>
+      <label style="font-size:12px">شهر الاستحقاق:</label>
+      <input id="month" type="month">
+    </div>
+  </div>
+  <button type="button" class="gold" onclick="addToCart()">➕ إضافة صنف للفاتورة</button>
+  <div id="cartList"></div>
+  <button class="green" onclick="addDebt()">📥 حفظ الفاتورة كاملة للعميل</button>
+</div>
+
+<div class="card">
+  <h3>تسديد مبلغ (دفعة جزئية / كاملة)</h3>
+  <label for="paymentCustomerSelect">اختر العميل:</label>
+  <select id="paymentCustomerSelect"></select>
+  <div class="row">
+    <input id="paymentAmount" type="number" placeholder="المبلغ المدفوع (ريال)">
+    <input id="paymentDate" type="date">
+  </div>
+  <button class="green" onclick="addPayment()">💰 تسجيل عملية السداد</button>
+</div>
+
+<div class="card" id="invoiceCard">
+  <div class="invoiceLogoBox">
+    <svg viewBox="0 0 24 24">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+    </svg>
+  </div>
+
+  <div class="invoiceTitle">كشف حساب العميل الإلكتروني</div>
+
+  <div class="invoiceInfo">
+    العميل الحالي: <span id="invoiceCustomerName" style="font-weight:bold;">-</span> | 
+    رقم الجوال: <span id="invoiceCustomerPhone">-</span><br>
+    الشهر المستهدف: <span id="invoiceMonthName" style="font-weight:bold;">-</span>
+  </div>
+
+  <div class="noPrint">
+    <label>عرض حساب العميل:</label>
+    <select id="viewCustomer" onchange="renderDebts()"></select>
+    <label>اختر الشهر:</label>
+    <input id="viewMonth" type="month" onchange="renderDebts()">
+  </div>
+
+  <div class="tableWrap">
+    <table class="invoiceTable">
+      <thead>
+        <tr>
+          <th>التاريخ</th>
+          <th>البيان / الصنف</th>
+          <th>النوع</th>
+          <th>الكمية × السعر</th>
+          <th>المبلغ</th>
+          <th class="noPdf noPrint">إجراء</th>
+        </tr>
+      </thead>
+      <tbody id="debtsList"></tbody>
+    </table>
+  </div>
+
+  <div class="summaryGrid">
+    <div class="summaryCard debt">إجمالي الديون والتسوق: <span id="sumDebts">0</span> ريال</div>
+    <div class="summaryCard paid">إجمالي المبالغ المسددة: <span id="sumPayments">0</span> ريال</div>
+    <div class="summaryCard net">المتبقي المستحق المطلوب سداده: <span id="totalAmount">0</span> ريال</div>
+  </div>
+
+  <div class="actionFields noPrint" style="margin-top:20px; text-align:center;">
+    <button class="gold smallBtn" onclick="editCustomerData()">✏️ تعديل بيانات العميل</button>
+    <button class="red smallBtn" onclick="deleteCustomer()">🗑 حذف العميل نهائياً</button>
+    <button class="gold smallBtn" onclick="backupData()">💾 نسخة احتياطية للجوال</button>
+  </div>
+
+  <div class="noPrint" style="margin-top:10px;">
+    <button onclick="sendWhatsApp()" class="green">📱 إرسال النص عبر الواتساب</button>
+    <button onclick="shareInvoicePDF()" class="green">📂 مشاركة الفاتورة كـ PDF واتساب</button>
+    <button onclick="window.print()" class="gold">🖨️ طباعة الفاتورة أو حفظها</button>
+    <button onclick="clearMonth()" class="red">🧹 تصفير عمليات هذا الشهر</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+let customers = JSON.parse(localStorage.getItem("customers") || "[]");
+let debts = JSON.parse(localStorage.getItem("debts") || "[]");
+let payments = JSON.parse(localStorage.getItem("payments") || "[]"); // مصفوفة المدفوعات الجديدة
+let cart = [];
+
+let today = new Date();
+let currentMonth = today.toISOString().slice(0,7);
+let currentDate = today.toISOString().slice(0,10);
+
+month.value = currentMonth;
+viewMonth.value = currentMonth;
+debtDate.value = currentDate;
+paymentDate.value = currentDate;
+
+function save(){
+  localStorage.setItem("customers", JSON.stringify(customers));
+  localStorage.setItem("debts", JSON.stringify(debts));
+  localStorage.setItem("payments", JSON.stringify(payments));
+}
+
+function addCustomer(){
+  let name = customerName.value.trim();
+  let phone = customerPhone.value.trim();
+  let id = customerIdField.value;
+
+  if(!name){
+    alert("الرجاء كتابة اسم العميل");
+    return;
+  }
+
+  if(id) {
+    // وضع التعديل
+    let index = customers.findIndex(c => c.id == id);
+    if(index !== -1) {
+      customers[index].name = name;
+      customers[index].phone = phone;
+      alert("تم تحديث بيانات العميل بنجاح");
+    }
+  } else {
+    // وضع الإضافة الجديد
+    customers.push({
+      id: Date.now(),
+      name: name,
+      phone: phone
+    });
+    alert("تم حفظ العميل الجديد");
+  }
+
+  resetCustomerForm();
+  save();
+  renderCustomers();
+}
+
+function editCustomerData() {
+  let id = viewCustomer.value;
+  if(!id){
+    alert("اختر العميل المراد تعديله أولاً");
+    return;
+  }
+  let customer = customers.find(c => c.id == id);
+  if(customer) {
+    customerFormTitle.innerText = "✏️ تعديل بيانات العميل الحالي";
+    customerIdField.value = customer.id;
+    customerName.value = customer.name;
+    customerPhone.value = customer.phone;
+    saveCustomerBtn.innerText = "تحديث البيانات";
+    cancelEditBtn.style.display = "inline-block";
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function resetCustomerForm() {
+  customerFormTitle.innerText = "إضافة عميل جديد";
+  customerIdField.value = "";
+  customerName.value = "";
+  customerPhone.value = "";
+  saveCustomerBtn.innerText = "حفظ العميل";
+  cancelEditBtn.style.display = "none";
+}
+
+function deleteCustomer(){
+  let id = viewCustomer.value;
+  if(!id){ alert("اختر العميل أولاً"); return; }
+
+  if(confirm("تحذير: هل أنت متأكد من حذف العميل وكافة ديونه وسجل مدفوعاته نهائياً؟")){
+    customers = customers.filter(c => c.id != id);
+    debts = debts.filter(d => d.customerId != id);
+    payments = payments.filter(p => p.customerId != id);
+
+    save();
+    renderCustomers();
+    resetCustomerForm();
+    alert("تم حذف العميل وكل السجلات المرتبطة به");
+  }
+}
+
+function renderCustomers(){
+  customerSelect.innerHTML = "";
+  paymentCustomerSelect.innerHTML = "";
+  viewCustomer.innerHTML = "";
+
+  customers.forEach(c=>{
+    let opt = `<option value="${c.id}">${c.name}</option>`;
+    customerSelect.innerHTML += opt;
+    paymentCustomerSelect.innerHTML += opt;
+    viewCustomer.innerHTML += opt;
+  });
+
+  renderDebts();
+}
+
+function addToCart(){
+  let product = productName.value.trim();
+  let p = Number(price.value);
+  let q = Number(qty.value);
+
+  if(!product || !p || !q){
+    alert("أكمل بيانات الصنف (الاسم، السعر، الكمية)");
+    return;
+  }
+
+  cart.push({
+    product: product,
+    price: p,
+    qty: q,
+    total: p * q
+  });
+
+  renderCart();
+  productName.value = "";
+  price.value = "";
+  qty.value = 1;
+}
+
+function renderCart(){
+  let html = "";
+  let cartTotal = 0;
+
+  if(cart.length === 0){
+    cartList.innerHTML = "";
+    return;
+  }
+
+  html += `<div class="cartBox">`;
+  cart.forEach((item,index)=>{
+    cartTotal += item.total;
+    html += `
+      <div class="cartItem">
+        <b>${item.product}</b><br>
+        الكمية: ${item.qty} × السعر: ${item.price} = <b>${item.total} ريال</b>
+        <button class="red smallBtn" style="float:left" onclick="removeCart(${index})">حذف</button>
+        <div style="clear:both"></div>
+      </div>
+    `;
+  });
+  html += `<div class="cartTotal">إجمالي الفاتورة الحالية: ${cartTotal} ريال</div>`;
+  html += `</div>`;
+
+  cartList.innerHTML = html;
+}
+
+function removeCart(index){
+  cart.splice(index,1);
+  renderCart();
+}
+
+function addDebt(){
+  let customerId = customerSelect.value;
+  let date = debtDate.value;
+  let m = month.value;
+
+  if(!customerId || !date || !m){
+    alert("تأكد من اختيار العميل وتاريخ العملية");
+    return;
+  }
+  if(cart.length === 0){
+    alert("أضف أصنافاً للفاتورة أولاً قبل الحفظ");
+    return;
+  }
+
+  cart.forEach(item => {
+    debts.push({
+      id: "D-" + Date.now() + Math.random(),
+      customerId: customerId,
+      product: item.product,
+      price: item.price,
+      qty: item.qty,
+      total: item.total,
+      date: date,
+      month: m
+    });
+  });
+
+  cart = [];
+  renderCart();
+  save();
+  renderDebts();
+  alert("تم حفظ الفاتورة بنجاح في سجل العميل");
+}
+
+function addPayment() {
+  let customerId = paymentCustomerSelect.value;
+  let amount = Number(paymentAmount.value);
+  let date = paymentDate.value;
+  let m = date.slice(0, 7); // استخراج الشهر تلقائياً من التاريخ لقيد السداد بنفس الشهر
+
+  if(!customerId || !amount || !date) {
+    alert("الرجاء تحديد العميل، والمبلغ المدفوع بشكل صحيح");
+    return;
+  }
+
+  payments.push({
+    id: "P-" + Date.now() + Math.random(),
+    customerId: customerId,
+    amount: amount,
+    date: date,
+    month: m
+  });
+
+  paymentAmount.value = "";
+  save();
+  renderDebts();
+  alert("تم تسجيل دفعة السداد بنجاح وخصمها من الحساب");
+}
+
+function backupData(){
+  let data = {
+    customers: customers,
+    debts: debts,
+    payments: payments,
+    backupDate: new Date().toLocaleString("ar-SA")
+  };
+
+  let blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `نسخة_احتياطية_الديون_${currentDate}.json`;
+  a.click();
+}
+
+function formatDate(date){
+  return new Date(date).toLocaleDateString("ar-SA",{year:"numeric", month:"numeric", day:"numeric"});
+}
+
+function formatMonth(month){
+  if(!month) return "-";
+  return new Date(month + "-01").toLocaleDateString("ar-SA",{year:"numeric", month:"long"});
+}
+
+function renderDebts(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+
+  let customer = customers.find(c=>c.id == customerId);
+  invoiceCustomerName.innerText = customer ? customer.name : "-";
+  invoiceCustomerPhone.innerText = (customer && customer.phone) ? customer.phone : "غير مسجل";
+  invoiceMonthName.innerText = formatMonth(m);
+
+  // جلب الديون
+  let currentDebts = debts.filter(d=>d.customerId == customerId && d.month == m);
+  // جلب المدفوعات لنفس الشهر
+  let currentPayments = payments.filter(p=>p.customerId == customerId && p.month == m);
+
+  // دمجهم في قائمة واحدة لترتيبهم زمنياً في الفاتورة
+  let allTransactions = [];
+  currentDebts.forEach(d => allTransactions.push({...d, type: 'debt'}));
+  currentPayments.forEach(p => allTransactions.push({...p, type: 'payment'}));
+  
+  allTransactions.sort((a,b)=>a.date.localeCompare(b.date));
+
+  debtsList.innerHTML = "";
+  let totalDebts = 0;
+  let totalPayments = 0;
+
+  allTransactions.forEach(t=>{
+    if(t.type === 'debt') {
+      totalDebts += t.total;
+      debtsList.innerHTML += `
+        <tr>
+          <td>${formatDate(t.date)}</td>
+          <td>${t.product}</td>
+          <td style="color:#b91c1c; font-weight:bold;">شراء / دين</td>
+          <td>${t.qty} × ${t.price}</td>
+          <td style="color:#b91c1c;">${t.total} ريال</td>
+          <td class="noPdf noPrint">
+            <button class="red smallBtn" onclick="deleteTransaction('${t.id}', 'debt')">حذف</button>
+          </td>
+        </tr>
+      `;
+    } else {
+      totalPayments += t.amount;
+      debtsList.innerHTML += `
+        <tr style="background:#f0fdf4;">
+          <td>${formatDate(t.date)}</td>
+          <td>دفعة نقدية مسددة</td>
+          <td style="color:#166534; font-weight:bold;">سداد جزئي</td>
+          <td>-</td>
+          <td style="color:#166534;">(${t.amount}-) ريال</td>
+          <td class="noPdf noPrint">
+            <button class="red smallBtn" onclick="deleteTransaction('${t.id}', 'payment')">حذف</button>
+          </td>
+        </tr>
+      `;
+    }
+  });
+
+  sumDebts.innerText = totalDebts;
+  sumPayments.innerText = totalPayments;
+  
+  let netAmount = totalDebts - totalPayments;
+  totalAmount.innerText = netAmount;
+}
+
+function deleteTransaction(id, type) {
+  if(confirm("هل أنت متأكد من حذف هذا السجل المعين؟")){
+    if(type === 'debt') {
+      debts = debts.filter(d => d.id !== id);
+    } else {
+      payments = payments.filter(p => p.id !== id);
+    }
+    save();
+    renderDebts();
+  }
+}
+
+function sendWhatsApp(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+  let customer = customers.find(c=>c.id == customerId);
+
+  if(!customer){ alert("اختر العميل أولاً"); return; }
+
+  let currentDebts = debts.filter(d=>d.customerId == customerId && d.month == m);
+  let currentPayments = payments.filter(p=>p.customerId == customerId && p.month == m);
+
+  if(currentDebts.length === 0 && currentPayments.length === 0){
+    alert("لا توجد عمليات مسجلة لهذا الشهر");
+    return;
+  }
+
+  let totalDebts = 0;
+  let totalPayments = 0;
+
+  let msg = `كشف حساب العميل الإلكتروني%0A`;
+  msg += `العميل: ${customer.name}%0A`;
+  msg += `الشهر: ${formatMonth(m)}%0A`;
+  msg += `--------------------%0A`;
+
+  currentDebts.forEach((d,i)=>{
+    totalDebts += d.total;
+    msg += `🔹 دين: ${d.product} [${d.qty}x${d.price}] = ${d.total} ريال (%0A${formatDate(d.date)})%0A`;
+  });
+
+  if(currentPayments.length > 0) msg += `--------------------%0A`;
+  currentPayments.forEach((p)=>{
+    totalPayments += p.amount;
+    msg += `🟢 سداد: تم استلام مبلغ ${p.amount} ريال (${formatDate(p.date)})%0A`;
+  });
+
+  msg += `--------------------%0A`;
+  msg += `📈 إجمالي ديون الشهر: ${totalDebts} ريال%0A`;
+  msg += `📉 إجمالي المبالغ المسددة: ${totalPayments} antiqua ريال%0A`;
+  msg += `💰 صافي المبلغ المتبقي للمطالبة: ${totalDebts - totalPayments} ريال%0A`;
+  msg += `شكراً لكم لحسن تعاونكم.`;
+
+  let phone = customer.phone.replace(/\D/g,"");
+  if(phone.startsWith("05")){ phone = "966" + phone.slice(1); }
+
+  window.open(`https://wa.me/${phone ? phone : ''}?text=${msg}`, "_blank");
+}
+
+async function shareInvoicePDF(){
+  let hidden = document.querySelectorAll(".noPrint, .noPdf");
+  hidden.forEach(e=>e.style.display="none");
+
+  const { jsPDF } = window.jspdf;
+  let invoice = document.getElementById("invoiceCard");
+  invoice.classList.add("pdfMode");
+
+  let canvas = await html2canvas(invoice,{ scale:2, backgroundColor:"#ffffff" });
+  let pdf = new jsPDF("p","mm","a4");
+
+  let pageWidth = 210;
+  let pageHeight = 297;
+  let margin = 5;
+  let imgWidth = pageWidth - margin * 2;
+  let imgHeight = canvas.height * imgWidth / canvas.width;
+
+  if(imgHeight > pageHeight - margin * 2){
+    imgHeight = pageHeight - margin * 2;
+    imgWidth = canvas.width * imgHeight / canvas.height;
+  }
+
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", (pageWidth - imgWidth)/2, margin, imgWidth, imgHeight);
+  let blob = pdf.output("blob");
+  let file = new File([blob],"كشف-حساب-العميل.pdf",{type:"application/pdf"});
+
+  invoice.classList.remove("pdfMode");
+  hidden.forEach(e=>e.style.display="");
+
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    await navigator.share({ title:"كشف الحساب المالي", text:"كشف حساب العميل المالي", files:[file] });
+  }else{
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "كشف-حساب-العميل.pdf";
+    a.click();
+    alert("تم حفظ ملف الـ PDF بنجاح، يمكنك الآن إرفاقه وإرساله عبر الواتساب يدوياً");
+  }
+}
+
+function clearMonth(){
+  let customerId = viewCustomer.value;
+  let m = viewMonth.value;
+
+  if(confirm("هل أنت متأكد من حذف وتصفير جميع الديون والمدفوعات لهذا العميل في هذا الشهر؟")){
+    debts = debts.filter(d=>!(d.customerId == customerId && d.month == m));
+    payments = payments.filter(p=>!(p.customerId == customerId && p.month == m));
+    save();
+    renderDebts();
+    alert("تم تصفير بيانات الشهر الحالي بنجاح");
+  }
+}
+
+/* التثبيت الذكي كتطبيق PWA */
+let deferredPrompt;
+let installBtn = document.getElementById("installBtn");
+
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = "block";
+});
+
+installBtn.addEventListener("click", async ()=>{
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+  }
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+
+// البدء التشغيلي الأول للتطبيق
+renderCustomers();
+</script>
+
+</body>
+</html>
