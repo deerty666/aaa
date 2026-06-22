@@ -130,11 +130,24 @@ button:hover{
   border-radius: 10px;
 }
 .tableWrap{
-  overflow-x:auto;
+  max-height: 260px;      /* 📏 تحديد حد أقصى للارتفاع */
+  overflow-y: auto;       /* ↕️ تفعيل التمرير العمودي للأعلى والأسفل */
+  overflow-x: auto;       /* ↔️ الحفاظ على التمرير الأفقي للشاشات الصغيرة */
   margin: 15px 0;
   border:1px solid #eaddca;
   border-radius:12px;
 }
+
+/* 🎨 لمسة جمالية لتناسق شريط التمرير مع هوية التطبيق */
+.tableWrap::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.tableWrap::-webkit-scrollbar-thumb {
+  background: #c39e6a;    
+  border-radius: 10px;
+}
+
 .invoiceTable{
   width:100%;
   border-collapse:collapse;
