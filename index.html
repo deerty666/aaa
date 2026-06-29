@@ -709,12 +709,12 @@ function sendWhatsApp(){
 
   window.open(`https://wa.me/${phone ? phone : ''}?text=${msg}`, "_blank");
 }
-async function shareInvoicePDF(){
+async function shareInvoicePDF() {
   // 1. إخفاء العناصر غير الضرورية
-  let hidden = document.querySelectorAll(".noPrint, .noPdf");
+  let hidden = document.querySelectorAll(".noPrint, .noPdf, .actionFields");
   hidden.forEach(e => e.style.display = "none");
 
-  // 2. [تعديل هام] إلغاء الارتفاع الثابت للجدول ليظهر كاملاً في الـ PDF
+  // 2. فك ضغط الجدول تماماً
   let tableWrap = document.querySelector(".tableWrap");
   tableWrap.style.maxHeight = "none";
   tableWrap.style.overflowY = "visible";
@@ -723,36 +723,41 @@ async function shareInvoicePDF(){
   let invoice = document.getElementById("invoiceCard");
   invoice.classList.add("pdfMode");
 
-  // 3. التقاط الصورة
-  let canvas = await html2canvas(invoice, { scale: 2, backgroundColor: "#ffffff" });
-  let pdf = new jsPDF("p", "mm", "a4");
+  // 3. التقاط الصورة بضبط أبعاد النافذة لتشمل كامل المحتوى الطويل
+  let canvas = await html2canvas(invoice, { 
+    scale: 2, 
+    backgroundColor: "#ffffff",
+    windowWidth: invoice.scrollWidth,
+    windowHeight: invoice.scrollHeight
+  });
 
+  // 4. إنشاء الـ PDF
+  let pdf = new jsPDF("p", "mm", "a4");
   let pageWidth = 210;
-  let pageHeight = 297;
   let margin = 5;
-  let imgWidth = pageWidth - margin * 2;
+  let imgWidth = pageWidth - (margin * 2);
   let imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  // 4. ضبط الصورة داخل الصفحة
+  // إضافة الصورة
   pdf.addImage(canvas.toDataURL("image/png"), "PNG", margin, margin, imgWidth, imgHeight);
-  
-  let blob = pdf.output("blob");
-  let file = new File([blob], "كشف-حساب-العميل.pdf", { type: "application/pdf" });
 
-  // 5. استعادة الحالة الأصلية للجدول
+  // 5. استعادة الحالة الأصلية
   invoice.classList.remove("pdfMode");
   tableWrap.style.maxHeight = "260px";
   tableWrap.style.overflowY = "auto";
   hidden.forEach(e => e.style.display = "");
 
-  // 6. مشاركة الملف
+  // 6. المشاركة
+  let blob = pdf.output("blob");
+  let file = new File([blob], "كشف_حساب.pdf", { type: "application/pdf" });
+
   if(navigator.canShare && navigator.canShare({files:[file]})){
-    await navigator.share({ title:"كشف الحساب المالي", text:"كشف حساب العميل المالي", files:[file] });
-  }else{
+    await navigator.share({ files: [file] });
+  } else {
     let url = URL.createObjectURL(blob);
     let a = document.createElement("a");
     a.href = url;
-    a.download = "كشف-حساب-العميل.pdf";
+    a.download = "كشف_حساب.pdf";
     a.click();
   }
 }
