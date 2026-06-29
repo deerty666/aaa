@@ -712,58 +712,45 @@ function sendWhatsApp(){
 
 async function shareInvoicePDF() {
   const { jsPDF } = window.jspdf;
-
   const invoice = document.getElementById("invoiceCard");
   const tableWrap = document.querySelector(".tableWrap");
   const hidden = document.querySelectorAll(".noPrint, .noPdf, .actionFields");
 
+  // 1. إخفاء عناصر التحكم وتوسيع الجدول
   hidden.forEach(el => el.style.display = "none");
-
   invoice.classList.add("pdfMode");
   tableWrap.style.maxHeight = "none";
   tableWrap.style.overflow = "visible";
 
-  await new Promise(r => setTimeout(r, 300));
+  // 2. انتظر قليلاً لضمان اكتمال الرسم في المتصفح
+  await new Promise(r => setTimeout(r, 600));
 
+  // 3. التقاط الصورة بأبعاد كاملة
   const canvas = await html2canvas(invoice, {
     scale: 2,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
+    windowWidth: invoice.scrollWidth,
+    windowHeight: invoice.scrollHeight,
     useCORS: true
   });
 
+  // 4. استعادة الحالة الأصلية فوراً
   hidden.forEach(el => el.style.display = "");
   invoice.classList.remove("pdfMode");
   tableWrap.style.maxHeight = "260px";
   tableWrap.style.overflowY = "auto";
 
-  const pdf = new jsPDF("p", "mm", "a4");
+  // 5. حساب الأبعاد لـ PDF بصفحة واحدة طويلة
+  const imgWidth = 200; 
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+  // إنشاء PDF بطول متغير (imgHeight + 20) ليحتوي كل شيء
+  const pdf = new jsPDF("p", "mm", [210, imgHeight + 20]);
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", 5, 5, imgWidth, imgHeight);
 
-  const pageWidth = 210;
-  const pageHeight = 297;
-  const margin = 5;
-
-  const imgWidth = pageWidth - margin * 2;
-  const imgHeight = canvas.height * imgWidth / canvas.width;
-
-  const imgData = canvas.toDataURL("image/png");
-
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight);
-  heightLeft -= (pageHeight - margin * 2);
-
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", margin, position + margin, imgWidth, imgHeight);
-    heightLeft -= (pageHeight - margin * 2);
-  }
-
+  // 6. مشاركة الملف أو تحميله
   const blob = pdf.output("blob");
-  const file = new File([blob], "كشف_حساب.pdf", {
-    type: "application/pdf"
-  });
+  const file = new File([blob], "كشف_حساب.pdf", { type: "application/pdf" });
 
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     await navigator.share({ files: [file] });
@@ -771,6 +758,7 @@ async function shareInvoicePDF() {
     pdf.save("كشف_حساب.pdf");
   }
 }
+
 
 
 function clearMonth(){
