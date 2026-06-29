@@ -709,36 +709,43 @@ function sendWhatsApp(){
 
   window.open(`https://wa.me/${phone ? phone : ''}?text=${msg}`, "_blank");
 }
-
 async function shareInvoicePDF(){
+  // 1. إخفاء العناصر غير الضرورية
   let hidden = document.querySelectorAll(".noPrint, .noPdf");
-  hidden.forEach(e=>e.style.display="none");
+  hidden.forEach(e => e.style.display = "none");
+
+  // 2. [تعديل هام] إلغاء الارتفاع الثابت للجدول ليظهر كاملاً في الـ PDF
+  let tableWrap = document.querySelector(".tableWrap");
+  tableWrap.style.maxHeight = "none";
+  tableWrap.style.overflowY = "visible";
 
   const { jsPDF } = window.jspdf;
   let invoice = document.getElementById("invoiceCard");
   invoice.classList.add("pdfMode");
 
-  let canvas = await html2canvas(invoice,{ scale:2, backgroundColor:"#ffffff" });
-  let pdf = new jsPDF("p","mm","a4");
+  // 3. التقاط الصورة
+  let canvas = await html2canvas(invoice, { scale: 2, backgroundColor: "#ffffff" });
+  let pdf = new jsPDF("p", "mm", "a4");
 
   let pageWidth = 210;
   let pageHeight = 297;
   let margin = 5;
   let imgWidth = pageWidth - margin * 2;
-  let imgHeight = canvas.height * imgWidth / canvas.width;
+  let imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  if(imgHeight > pageHeight - margin * 2){
-    imgHeight = pageHeight - margin * 2;
-    imgWidth = canvas.width * imgHeight / canvas.height;
-  }
-
-  pdf.addImage(canvas.toDataURL("image/png"), "PNG", (pageWidth - imgWidth)/2, margin, imgWidth, imgHeight);
+  // 4. ضبط الصورة داخل الصفحة
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", margin, margin, imgWidth, imgHeight);
+  
   let blob = pdf.output("blob");
-  let file = new File([blob],"كشف-حساب-العميل.pdf",{type:"application/pdf"});
+  let file = new File([blob], "كشف-حساب-العميل.pdf", { type: "application/pdf" });
 
+  // 5. استعادة الحالة الأصلية للجدول
   invoice.classList.remove("pdfMode");
-  hidden.forEach(e=>e.style.display="");
+  tableWrap.style.maxHeight = "260px";
+  tableWrap.style.overflowY = "auto";
+  hidden.forEach(e => e.style.display = "");
 
+  // 6. مشاركة الملف
   if(navigator.canShare && navigator.canShare({files:[file]})){
     await navigator.share({ title:"كشف الحساب المالي", text:"كشف حساب العميل المالي", files:[file] });
   }else{
@@ -747,9 +754,9 @@ async function shareInvoicePDF(){
     a.href = url;
     a.download = "كشف-حساب-العميل.pdf";
     a.click();
-    alert("تم حفظ ملف الـ PDF بنجاح، يمكنك الآن إرفاقه وإرساله عبر الواتساب يدوياً");
   }
 }
+
 
 function clearMonth(){
   let customerId = viewCustomer.value;
