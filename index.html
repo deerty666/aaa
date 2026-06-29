@@ -712,59 +712,63 @@ function sendWhatsApp(){
 
 async function shareInvoicePDF() {
   const { jsPDF } = window.jspdf;
-  let invoice = document.getElementById("invoiceCard");
-  let tableWrap = document.querySelector(".tableWrap");
-  let hidden = document.querySelectorAll(".noPrint, .noPdf, .actionFields");
 
-  // 1. إخفاء العناصر غير الضرورية
-  hidden.forEach(e => e.style.display = "none");
+  const invoice = document.getElementById("invoiceCard");
+  const tableWrap = document.querySelector(".tableWrap");
+  const hidden = document.querySelectorAll(".noPrint, .noPdf, .actionFields");
 
-  // 2. إجبار الجدول على التمدد ليأخذ كامل مساحته الحقيقية
-  invoice.style.height = "auto";
+  hidden.forEach(el => el.style.display = "none");
+
+  invoice.classList.add("pdfMode");
   tableWrap.style.maxHeight = "none";
   tableWrap.style.overflow = "visible";
-  invoice.classList.add("pdfMode");
 
-  // 3. تأخير بسيط جداً (500ms) ليتمكن المتصفح من إعادة رسم الجدول بالكامل قبل التقاط الصورة
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(r => setTimeout(r, 300));
 
-  // 4. التقاط الصورة بضبط أبعاد النافذة لتشمل كامل المحتوى
-  let canvas = await html2canvas(invoice, { 
-    scale: 2, 
-    backgroundColor: "#ffffff",
-    windowWidth: invoice.scrollWidth,
-    windowHeight: invoice.scrollHeight
+  const canvas = await html2canvas(invoice, {
+    scale: 2,
+    backgroundColor: "#fff",
+    useCORS: true
   });
 
-  // 5. إنشاء الـ PDF
-  let pdf = new jsPDF("p", "mm", "a4");
-  let pageWidth = 210;
-  let margin = 5;
-  let imgWidth = pageWidth - (margin * 2);
-  let imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-  // إضافة الصورة
-  pdf.addImage(canvas.toDataURL("image/png"), "PNG", margin, margin, imgWidth, imgHeight);
-
-  // 6. استعادة الحالة الأصلية
+  hidden.forEach(el => el.style.display = "");
   invoice.classList.remove("pdfMode");
-  invoice.style.height = "";
   tableWrap.style.maxHeight = "260px";
   tableWrap.style.overflowY = "auto";
-  hidden.forEach(e => e.style.display = "");
 
-  // 7. المشاركة
-  let blob = pdf.output("blob");
-  let file = new File([blob], "كشف_حساب.pdf", { type: "application/pdf" });
+  const pdf = new jsPDF("p", "mm", "a4");
 
-  if(navigator.canShare && navigator.canShare({files:[file]})){
+  const pageWidth = 210;
+  const pageHeight = 297;
+  const margin = 5;
+
+  const imgWidth = pageWidth - margin * 2;
+  const imgHeight = canvas.height * imgWidth / canvas.width;
+
+  const imgData = canvas.toDataURL("image/png");
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight);
+  heightLeft -= (pageHeight - margin * 2);
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", margin, position + margin, imgWidth, imgHeight);
+    heightLeft -= (pageHeight - margin * 2);
+  }
+
+  const blob = pdf.output("blob");
+  const file = new File([blob], "كشف_حساب.pdf", {
+    type: "application/pdf"
+  });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
     await navigator.share({ files: [file] });
   } else {
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement("a");
-    a.href = url;
-    a.download = "كشف_حساب.pdf";
-    a.click();
+    pdf.save("كشف_حساب.pdf");
   }
 }
 
