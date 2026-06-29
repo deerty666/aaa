@@ -1,4 +1,4 @@
-const CACHE_NAME = "deyon-v2";
+const CACHE_NAME = "deyon-v7";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
