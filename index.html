@@ -709,21 +709,26 @@ function sendWhatsApp(){
 
   window.open(`https://wa.me/${phone ? phone : ''}?text=${msg}`, "_blank");
 }
+
 async function shareInvoicePDF() {
-  // 1. إخفاء العناصر غير الضرورية
-  let hidden = document.querySelectorAll(".noPrint, .noPdf, .actionFields");
-  hidden.forEach(e => e.style.display = "none");
-
-  // 2. فك ضغط الجدول تماماً
-  let tableWrap = document.querySelector(".tableWrap");
-  tableWrap.style.maxHeight = "none";
-  tableWrap.style.overflowY = "visible";
-
   const { jsPDF } = window.jspdf;
   let invoice = document.getElementById("invoiceCard");
+  let tableWrap = document.querySelector(".tableWrap");
+  let hidden = document.querySelectorAll(".noPrint, .noPdf, .actionFields");
+
+  // 1. إخفاء العناصر غير الضرورية
+  hidden.forEach(e => e.style.display = "none");
+
+  // 2. إجبار الجدول على التمدد ليأخذ كامل مساحته الحقيقية
+  invoice.style.height = "auto";
+  tableWrap.style.maxHeight = "none";
+  tableWrap.style.overflow = "visible";
   invoice.classList.add("pdfMode");
 
-  // 3. التقاط الصورة بضبط أبعاد النافذة لتشمل كامل المحتوى الطويل
+  // 3. تأخير بسيط جداً (500ms) ليتمكن المتصفح من إعادة رسم الجدول بالكامل قبل التقاط الصورة
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // 4. التقاط الصورة بضبط أبعاد النافذة لتشمل كامل المحتوى
   let canvas = await html2canvas(invoice, { 
     scale: 2, 
     backgroundColor: "#ffffff",
@@ -731,7 +736,7 @@ async function shareInvoicePDF() {
     windowHeight: invoice.scrollHeight
   });
 
-  // 4. إنشاء الـ PDF
+  // 5. إنشاء الـ PDF
   let pdf = new jsPDF("p", "mm", "a4");
   let pageWidth = 210;
   let margin = 5;
@@ -741,13 +746,14 @@ async function shareInvoicePDF() {
   // إضافة الصورة
   pdf.addImage(canvas.toDataURL("image/png"), "PNG", margin, margin, imgWidth, imgHeight);
 
-  // 5. استعادة الحالة الأصلية
+  // 6. استعادة الحالة الأصلية
   invoice.classList.remove("pdfMode");
+  invoice.style.height = "";
   tableWrap.style.maxHeight = "260px";
   tableWrap.style.overflowY = "auto";
   hidden.forEach(e => e.style.display = "");
 
-  // 6. المشاركة
+  // 7. المشاركة
   let blob = pdf.output("blob");
   let file = new File([blob], "كشف_حساب.pdf", { type: "application/pdf" });
 
